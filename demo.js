@@ -3,17 +3,17 @@ var fps = require('fps'),
   debounce = require('debounce'),
   Boids = require('./');
 
-var attractors = [[
-    Infinity, // x
-    Infinity, // y
-    150, // dist
-    0.25 // spd
-]];
+var attractors = [{
+    x: Infinity,
+    y: Infinity,
+    dist: 150,
+    speed: 0.25
+}];
 
 var canvas = document.createElement('canvas'),
   ctx = canvas.getContext('2d'),
   boids = Boids({
-      boids: 150,
+      boids: 2,
       speedLimit: 2,
       accelerationLimit: 0.5,
       attractors: attractors
@@ -23,8 +23,8 @@ document.body.onmousemove = function(e) {
   var halfHeight = canvas.height/2,
     halfWidth = canvas.width/2;
 
-  attractors[0][0] = e.x - halfWidth;
-  attractors[0][1] = e.y - halfHeight;
+  attractors[0].x = e.x - halfWidth;
+  attractors[0].y = e.y - halfHeight;
 };
 
 window.onresize = debounce(function() {
@@ -62,8 +62,8 @@ var frameText = document.querySelector('[data-fps]');
 var countText = document.querySelector('[data-count]');
 var frames = fps({ every: 10, decay: 0.04 }).on('data', function(rate) {
   for (var i = 0; i < 3; i += 1) {
-    if (rate <= 56 && boids.boids.length > 10) boids.boids.pop();
-    if (rate >= 60 && boids.boids.length < 500) boids.boids.push([0,0,Math.random()*6-3,Math.random()*6-3,0,0]);
+    //if (rate <= 56 && boids.boids.length > 10) boids.boids.pop();
+    //if (rate >= 60 && boids.boids.length < 500) boids.boids.push([0,0,Math.random()*6-3,Math.random()*6-3,0,0]);
   }
   frameText.innerHTML = String(Math.round(rate));
   countText.innerHTML = String(boids.boids.length);

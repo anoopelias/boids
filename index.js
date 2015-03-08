@@ -80,14 +80,14 @@ Boids.prototype.tick = function() {
     target = attractorCount;
     while (target--) {
       attractor = attractors[target];
-      spareX = currPos[0] - attractor[0];
-      spareY = currPos[1] - attractor[1];
+      spareX = currPos[0] - attractor.x;
+      spareY = currPos[1] - attractor.y;
       distSquared = spareX*spareX + spareY*spareY;
 
-      if (distSquared < attractor[2]*attractor[2]) {
+      if (distSquared < attractor.dist*attractor.dist) {
         length = sqrt(spareX*spareX+spareY*spareY);
-        boids[current][SPEEDX] -= (attractor[3] * spareX / length) || 0;
-        boids[current][SPEEDY] -= (attractor[3] * spareY / length) || 0;
+        boids[current][SPEEDX] -= (attractor.speed * spareX / length) || 0;
+        boids[current][SPEEDY] -= (attractor.speed * spareY / length) || 0;
       }
     }
 
