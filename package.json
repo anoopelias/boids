@@ -17,7 +17,7 @@
   "description": "ERROR: No README.md file found!",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/jshint index.js demo.js",
+    "test": "jshint index.js demo.js",
     "prepublish": "node_modules/.bin/browserify demo.js -o bundle.js",
     "start": "node_modules/.bin/beefy demo.js:bundle.js"
   },

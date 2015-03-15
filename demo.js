@@ -1,7 +1,8 @@
 var fps = require('fps'),
   ticker = require('ticker'),
   debounce = require('debounce'),
-  Boids = require('./');
+  Boids = require('./'),
+  Vector = require('./vector');
 
 var attractors = [{
     x: Infinity,
@@ -13,10 +14,7 @@ var attractors = [{
 var canvas = document.createElement('canvas'),
   ctx = canvas.getContext('2d'),
   boids = Boids({
-      boids: 2,
-      speedLimit: 2,
-      accelerationLimit: 0.5,
-      attractors: attractors
+    attractors: attractors
   });
 
 document.body.onmousemove = function(e) {
@@ -50,10 +48,10 @@ ticker(window, 60).on('tick', function() {
 
   ctx.fillStyle = '#543D5E';
   for (var i = 0, l = boidData.length, x, y; i < l; i += 1) {
-    x = boidData[i][0]; y = boidData[i][1];
+    x = boidData[i].position.x; y = boidData[i].position.y;
     // wrap around the screen
-    boidData[i][0] = x > halfWidth ? -halfWidth : -x > halfWidth ? halfWidth : x;
-    boidData[i][1] = y > halfHeight ? -halfHeight : -y > halfHeight ? halfHeight : y;
+    boidData[i].position.x = x > halfWidth ? -halfWidth : -x > halfWidth ? halfWidth : x;
+    boidData[i].position.y = y > halfHeight ? -halfHeight : -y > halfHeight ? halfHeight : y;
     ctx.fillRect(x + halfWidth, y + halfHeight, 2, 2);
   }
 });
@@ -62,8 +60,13 @@ var frameText = document.querySelector('[data-fps]');
 var countText = document.querySelector('[data-count]');
 var frames = fps({ every: 10, decay: 0.04 }).on('data', function(rate) {
   for (var i = 0; i < 3; i += 1) {
-    //if (rate <= 56 && boids.boids.length > 10) boids.boids.pop();
-    //if (rate >= 60 && boids.boids.length < 500) boids.boids.push([0,0,Math.random()*6-3,Math.random()*6-3,0,0]);
+    if (rate <= 56 && boids.boids.length > 10) boids.boids.pop();
+    if (rate >= 60 && boids.boids.length < 500) 
+      boids.boids.push({
+        position: new Vector(0,0),
+        speed: new Vector(Math.random()*6-3,Math.random()*6-3),
+        acceleration : new Vector(0,0)
+      });
   }
   frameText.innerHTML = String(Math.round(rate));
   countText.innerHTML = String(boids.boids.length);

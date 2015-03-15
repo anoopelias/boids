@@ -1,12 +1,6 @@
 var EventEmitter = require('events').EventEmitter, 
   inherits = require('inherits'),
-  sqrt = Math.sqrt,
-  POSITIONX = 0,
-  POSITIONY = 1,
-  SPEEDX = 2,
-  SPEEDY = 3,
-  ACCELERATIONX = 4,
-  ACCELERATIONY = 5;
+  Vector = require('./vector');
 
 module.exports = Boids;
 
@@ -17,25 +11,30 @@ function Boids(opts, callback) {
   opts = opts || {};
   callback = callback || function(){};
 
-  this.speedLimitRoot = opts.speedLimit || 0;
-  this.accelerationLimitRoot = opts.accelerationLimit || 1;
-  this.speedLimit = Math.pow(this.speedLimitRoot, 2);
-  this.accelerationLimit = Math.pow(this.accelerationLimitRoot, 2);
-  this.separationDistance = Math.pow(opts.separationDistance || 60, 2);
-  this.alignmentDistance = Math.pow(opts.alignmentDistance || 180, 2);
-  this.cohesionDistance = Math.pow(opts.cohesionDistance || 180, 2);
-  this.separationForce = opts.separationForce || 0.15;
-  this.cohesionForce = opts.cohesionForce || 0.1;
-  this.alignmentForce = opts.alignmentForce || opts.alignment || 0.25;
+  this.speedLimit = opts.speedLimit || 1;
+  this.accelerationLimit = opts.accelerationLimit || 0.03;
+  this.separationDistance = opts.separationDistance || 20;
+  this.alignmentDistance = opts.alignmentDistance || 180;
+  this.cohesionDistance = opts.cohesionDistance || 100;
+  this.separationForce = opts.separationForce || 2;
+  this.cohesionForce = opts.cohesionForce || 1;
+  this.alignmentForce = opts.alignmentForce || opts.alignment || 4;
   this.attractors = opts.attractors || [];
 
-  var boids = this.boids = [];
-  for (var i = 0, l = opts.boids === undefined ? 50 : opts.boids; i < l; i += 1) {
-    boids[i] = [
-        Math.random()*25, Math.random()*25, // position
-        0, 0,                               // speed
-        0, 0                                // acceleration
-    ];
+  var boids = this.boids = [{
+    position: new Vector(20, 0),
+    speed: new Vector(0, 1) 
+  },{
+    position: new Vector(-20, 0),
+    speed: new Vector(0, 1) 
+  }];
+
+  for (var i = 0, l = opts.boids === undefined ? 150 : opts.boids; i < l; i += 1) {
+    boids[i] = {
+      position: new Vector(Math.random()*25, Math.random()*25),
+      speed: new Vector(0, 0),
+      acceleration: new Vector(0, 0)
+    };
   }
 
   this.on('tick', function() {
@@ -44,117 +43,124 @@ function Boids(opts, callback) {
 }
 inherits(Boids, EventEmitter);
 
-Boids.prototype.tick = function() {
-  var boids = this.boids,
-    sepDist = this.separationDistance,
-    sepForce = this.separationForce,
-    cohDist = this.cohesionDistance,
-    cohForce = this.cohesionForce,
-    aliDist = this.alignmentDistance,
-    aliForce = this.alignmentForce,
-    speedLimit = this.speedLimit,
-    accelerationLimit = this.accelerationLimit,
-    accelerationLimitRoot = this.accelerationLimitRoot,
-    speedLimitRoot = this.speedLimitRoot,
-    size = boids.length,
-    current = size,
-    sforceX, sforceY,
-    cforceX, cforceY,
-    aforceX, aforceY,
-    spareX, spareY,
-    attractors = this.attractors,
-    attractorCount = attractors.length,
-    distSquared,
-    currPos,
-    targPos,
-    length,
-    target;
+Boids.prototype.calcCohesion = function(boid) {
+  var total = new Vector(0, 0);
+  var count = 0;
+  
+  for(var i=0; i<this.boids.length; i++) {
+    var target = this.boids[i];
+    if(boid === target)
+      continue;
 
-  while (current--) {
-    sforceX = 0; sforceY = 0;
-    cforceX = 0; cforceY = 0;
-    aforceX = 0; aforceY = 0;
-    currPos = boids[current];
-
-    // Attractors
-    target = attractorCount;
-    while (target--) {
-      attractor = attractors[target];
-      spareX = currPos[0] - attractor.x;
-      spareY = currPos[1] - attractor.y;
-      distSquared = spareX*spareX + spareY*spareY;
-
-      if (distSquared < attractor.dist*attractor.dist) {
-        length = sqrt(spareX*spareX+spareY*spareY);
-        boids[current][SPEEDX] -= (attractor.speed * spareX / length) || 0;
-        boids[current][SPEEDY] -= (attractor.speed * spareY / length) || 0;
-      }
+    var dist = boid.position.distance(target.position);
+    if(dist < this.cohesionDistance && 
+        isInFrontOf(boid, target.position)) {
+      total = total.add(target.position);
+      count++;
     }
-
-    target = size;
-    while (target--) {
-      if (target === current) continue;
-      spareX = currPos[0] - boids[target][0];
-      spareY = currPos[1] - boids[target][1];
-      distSquared = spareX*spareX + spareY*spareY;
-
-      if (distSquared < sepDist) {
-        sforceX += spareX;
-        sforceY += spareY;
-      } else {
-        if (distSquared < cohDist) {
-          cforceX += spareX;
-          cforceY += spareY;
-        }
-        if (distSquared < aliDist) {
-          aforceX += boids[target][SPEEDX];
-          aforceY += boids[target][SPEEDY];
-        }
-      }
-    }
-
-    // Separation
-    length = sqrt(sforceX*sforceX + sforceY*sforceY);
-    boids[current][ACCELERATIONX] += (sepForce * sforceX / length) || 0;
-    boids[current][ACCELERATIONY] += (sepForce * sforceY / length) || 0;
-    // Cohesion
-    length = sqrt(cforceX*cforceX + cforceY*cforceY);
-    boids[current][ACCELERATIONX] -= (cohForce * cforceX / length) || 0;
-    boids[current][ACCELERATIONY] -= (cohForce * cforceY / length) || 0;
-    // Alignment
-    length = sqrt(aforceX*aforceX + aforceY*aforceY);
-    boids[current][ACCELERATIONX] -= (aliForce * aforceX / length) || 0;
-    boids[current][ACCELERATIONY] -= (aliForce * aforceY / length) || 0;
-  }
-  current = size;
-
-  // Apply speed/acceleration for
-  // this tick
-  while (current--) {
-    if (accelerationLimit) {
-      distSquared = boids[current][ACCELERATIONX]*boids[current][ACCELERATIONX] + boids[current][ACCELERATIONY]*boids[current][ACCELERATIONY];
-      if (distSquared > accelerationLimit) {
-        ratio = accelerationLimitRoot / sqrt(distSquared);
-        boids[current][ACCELERATIONX] *= ratio;
-        boids[current][ACCELERATIONY] *= ratio;
-      }
-    }
-
-    boids[current][SPEEDX] += boids[current][ACCELERATIONX];
-    boids[current][SPEEDY] += boids[current][ACCELERATIONY];
-
-    if (speedLimit) {
-      distSquared = boids[current][SPEEDX]*boids[current][SPEEDX] + boids[current][SPEEDY]*boids[current][SPEEDY];
-      if (distSquared > speedLimit) {
-        ratio = speedLimitRoot / sqrt(distSquared);
-        boids[current][SPEEDX] *= ratio;
-        boids[current][SPEEDY] *= ratio;
-      }
-    }
-
-    boids[current][POSITIONX] += boids[current][SPEEDX];
-    boids[current][POSITIONY] += boids[current][SPEEDY];
   }
 
-  this.emit('tick', boids);
+  if( count === 0) 
+    return new Vector(0, 0);
+
+  return total
+    .divideBy(count)
+    .subtract(boid.position)
+    .normalize()
+    .subtract(boid.speed)
+    .limit(this.accelerationLimit);
 };
+
+Boids.prototype.calcSeparation = function(boid) {
+  var total = new Vector(0, 0);
+  var count = 0;
+
+  for(var i=0; i<this.boids.length; i++) {
+    var target = this.boids[i];
+    if(boid === target)
+      continue;
+
+    var dist = boid.position.distance(target.position);
+    if(dist < this.separationDistance) {
+      total = total.add(
+        boid.position
+          .subtract(target.position)
+          .normalize()
+          .divideBy(dist));
+      count++;
+    }
+  }
+
+  if(count === 0) 
+    return new Vector(0, 0);
+
+  return total
+    .divideBy(count)
+    .normalize()
+    .subtract(boid.speed)
+    .limit(this.accelerationLimit);
+};
+
+Boids.prototype.calcAlignment = function(boid) {
+  var total = new Vector(0, 0);
+  var count = 0;
+
+  for(var i=0; i<this.boids.length; i++) {
+    var target = this.boids[i];
+    if(boid === target)
+      continue;
+
+    var dist = boid.position.distance(target.position);
+    if(dist < this.alignmentDistance && 
+        isInFrontOf(boid, target.position)) {
+      total = total.add(boid.speed);
+      count++;
+    }
+  }
+
+  if (count === 0)
+    return new Vector(0, 0);
+
+  return total
+    .divideBy(count)
+    .normalize()
+    .subtract(boid.speed)
+    .limit(this.accelerationLimit);
+};
+
+Boids.prototype.tick = function() {
+
+  for(var i=0; i<this.boids.length; i++) {
+    var boid = this.boids[i];
+    var cohesion = this
+      .calcCohesion(boid)
+      .multiplyBy(this.cohesionForce);
+    var separation = this
+      .calcSeparation(boid)
+      .multiplyBy(this.separationForce);
+    var alignment = this
+      .calcAlignment(boid)
+      .multiplyBy(this.alignmentForce);
+
+    boid.acceleration = cohesion.add(separation).add(alignment);
+  }
+
+  for(var i=0; i<this.boids.length; i++) {
+    var boid = this.boids[i];
+    boid.speed = boid.speed
+      .add(boid.acceleration)
+      .limit(this.speedLimit);
+
+    boid.position = boid.position.add(boid.speed);
+    boid.acceleration = new Vector(0, 0);
+  }
+
+  this.emit('tick', this.boids);
+};
+
+function isInFrontOf(boid, point) {
+  return boid.position.angle(
+      boid.position.add(boid.speed), point)
+    <= ( Math.PI / 2);
+}
+
