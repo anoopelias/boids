@@ -1,77 +1,144 @@
 ;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
-var fps = require('fps')
-  , ticker = require('ticker')
-  , debounce = require('debounce')
-  , Boids = require('./')
 
-var attractors = [[
-    Infinity // x
-  , Infinity // y
-  , 150 // dist
-  , 0.25 // spd
-]]
-
-var canvas = document.createElement('canvas')
-  , ctx = canvas.getContext('2d')
-  , boids = Boids({
-      boids: 150
-    , speedLimit: 2
-    , accelerationLimit: 0.5
-    , attractors: attractors
-  })
-
-document.body.onmousemove = function(e) {
-  var halfHeight = canvas.height/2
-    , halfWidth = canvas.width/2
-
-  attractors[0][0] = e.x - halfWidth
-  attractors[0][1] = e.y - halfHeight
+function Vector(x, y) {
+  this.x = x;
+  this.y = y;
 }
 
-window.onresize = debounce(function() {
-  canvas.width = window.innerWidth
-  canvas.height = window.innerHeight
-}, 100)
-window.onresize()
+Vector.prototype.add = function(v) {
+  return new Vector(this.x + v.x, this.y + v.y);
+}
 
-document.body.style.margin = '0'
-document.body.style.padding = '0'
-document.body.appendChild(canvas)
+Vector.prototype.distSquared = function(v) {
+  return Math.pow(this.x - v.x, 2) + 
+    Math.pow(this.y - v.y, 2);
+}
+
+Vector.prototype.distance = function(v) {
+  return Math.sqrt(this.distSquared(v));
+}
+
+Vector.prototype.multiplyBy = function(s) {
+  return new Vector(this.x * s, this.y * s);
+}
+
+Vector.prototype.neg = function(v) {
+  return new Vector(-this.x, -this.y);
+}
+
+Vector.prototype.magnitude = function() {
+  return this.distance(new Vector(0, 0));
+}
+
+Vector.prototype.normalize = function() {
+  var magnitude = this.magnitude();
+  
+  if(magnitude === 0)
+    return new Vector(0, 0);
+
+  return new Vector(this.x / magnitude, this.y / magnitude);
+}
+
+Vector.prototype.subtract = function(v) {
+  return this.add(v.neg());
+}
+
+Vector.prototype.divideBy = function(s) {
+  return this.multiplyBy(1 / s);
+}
+
+Vector.prototype.limit = function(s) {
+  if(this.magnitude() > s)
+    return this.normalize().multiplyBy(s);
+
+  return this;
+}
+
+Vector.prototype.angle = function(p1, p2) {
+  var v1 = this.subtract(p1).normalize();
+  var v2 = this.subtract(p2).normalize();
+
+  return Math.acos(v1.x * v2.x + v1.y * v2.y);
+}
+
+module.exports = Vector;
+
+},{}],2:[function(require,module,exports){
+var fps = require('fps'),
+  ticker = require('ticker'),
+  debounce = require('debounce'),
+  Boids = require('./'),
+  Vector = require('./vector');
+
+var attractors = [{
+    x: Infinity,
+    y: Infinity,
+    dist: 150,
+    speed: 0.25
+}];
+
+var canvas = document.createElement('canvas'),
+  ctx = canvas.getContext('2d'),
+  boids = Boids({
+    attractors: attractors
+  });
+
+document.body.onmousemove = function(e) {
+  var halfHeight = canvas.height/2,
+    halfWidth = canvas.width/2;
+
+  attractors[0].x = e.x - halfWidth;
+  attractors[0].y = e.y - halfHeight;
+};
+
+window.onresize = debounce(function() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}, 100);
+window.onresize();
+
+document.body.style.margin = '0';
+document.body.style.padding = '0';
+document.body.appendChild(canvas);
 
 ticker(window, 60).on('tick', function() {
-  frames.tick()
-  boids.tick()
+  frames.tick();
+  boids.tick();
 }).on('draw', function() {
-  var boidData = boids.boids
-    , halfHeight = canvas.height/2
-    , halfWidth = canvas.width/2
+  var boidData = boids.boids,
+    halfHeight = canvas.height/2,
+    halfWidth = canvas.width/2;
 
-  ctx.fillStyle = 'rgba(255,241,235,0.25)' // '#FFF1EB'
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
+  ctx.fillStyle = 'rgba(255,241,235,0.25)'; // '#FFF1EB'
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  ctx.fillStyle = '#543D5E'
+  ctx.fillStyle = '#543D5E';
   for (var i = 0, l = boidData.length, x, y; i < l; i += 1) {
-    x = boidData[i][0]; y = boidData[i][1]
+    x = boidData[i].position.x; y = boidData[i].position.y;
     // wrap around the screen
-    boidData[i][0] = x > halfWidth ? -halfWidth : -x > halfWidth ? halfWidth : x
-    boidData[i][1] = y > halfHeight ? -halfHeight : -y > halfHeight ? halfHeight : y
-    ctx.fillRect(x + halfWidth, y + halfHeight, 2, 2)
+    boidData[i].position.x = x > halfWidth ? -halfWidth : -x > halfWidth ? halfWidth : x;
+    boidData[i].position.y = y > halfHeight ? -halfHeight : -y > halfHeight ? halfHeight : y;
+    ctx.fillRect(x + halfWidth, y + halfHeight, 2, 2);
   }
-})
+});
 
-var frameText = document.querySelector('[data-fps]')
-var countText = document.querySelector('[data-count]')
+var frameText = document.querySelector('[data-fps]');
+var countText = document.querySelector('[data-count]');
 var frames = fps({ every: 10, decay: 0.04 }).on('data', function(rate) {
   for (var i = 0; i < 3; i += 1) {
-    if (rate <= 56 && boids.boids.length > 10) boids.boids.pop()
-    if (rate >= 60 && boids.boids.length < 500) boids.boids.push([0,0,Math.random()*6-3,Math.random()*6-3,0,0])
+    if (rate <= 56 && boids.boids.length > 10) boids.boids.pop();
+    if (rate >= 60 && boids.boids.length < 500) 
+      boids.boids.push({
+        position: new Vector(0,0),
+        speed: new Vector(Math.random()*6-3,Math.random()*6-3),
+        acceleration : new Vector(0,0)
+      });
   }
-  frameText.innerHTML = String(Math.round(rate))
-  countText.innerHTML = String(boids.boids.length)
-})
+  frameText.innerHTML = String(Math.round(rate));
+  countText.innerHTML = String(boids.boids.length);
+});
 
-},{"fps":2,"ticker":3,"./":4,"debounce":5}],5:[function(require,module,exports){
-
+},{"./vector":1,"./":3,"fps":4,"debounce":5,"ticker":6}],5:[function(require,module,exports){
 /**
  * Debounces a function by the given threshold.
  *
@@ -94,7 +161,7 @@ module.exports = function debounce(func, threshold, execAsap){
         func.apply(obj, args);
       }
       timeout = null;
-    };
+    }
 
     if (timeout) {
       clearTimeout(timeout);
@@ -106,7 +173,7 @@ module.exports = function debounce(func, threshold, execAsap){
   };
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -125,7 +192,8 @@ process.nextTick = (function () {
     if (canPost) {
         var queue = [];
         window.addEventListener('message', function (ev) {
-            if (ev.source === window && ev.data === 'process-tick') {
+            var source = ev.source;
+            if ((source === window || source === null) && ev.data === 'process-tick') {
                 ev.stopPropagation();
                 if (queue.length > 0) {
                     var fn = queue.shift();
@@ -160,7 +228,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 (function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
 
 var EventEmitter = exports.EventEmitter = process.EventEmitter;
@@ -346,169 +414,175 @@ EventEmitter.prototype.listeners = function(type) {
 };
 
 })(require("__browserify_process"))
-},{"__browserify_process":6}],4:[function(require,module,exports){
-var EventEmitter = require('events').EventEmitter
-  , inherits = require('inherits')
-  , sqrt = Math.sqrt
-  , POSITIONX = 0
-  , POSITIONY = 1
-  , SPEEDX = 2
-  , SPEEDY = 3
-  , ACCELERATIONX = 4
-  , ACCELERATIONY = 5
+},{"__browserify_process":7}],3:[function(require,module,exports){
+var EventEmitter = require('events').EventEmitter, 
+  inherits = require('inherits'),
+  Vector = require('./vector');
 
-module.exports = Boids
+module.exports = Boids;
 
 function Boids(opts, callback) {
-  if (!(this instanceof Boids)) return new Boids(opts, callback)
-  EventEmitter.call(this)
+  if (!(this instanceof Boids)) return new Boids(opts, callback);
+  EventEmitter.call(this);
 
-  opts = opts || {}
-  callback = callback || function(){}
+  opts = opts || {};
+  callback = callback || function(){};
 
-  this.speedLimitRoot = opts.speedLimit || 0
-  this.accelerationLimitRoot = opts.accelerationLimit || 1
-  this.speedLimit = Math.pow(this.speedLimitRoot, 2)
-  this.accelerationLimit = Math.pow(this.accelerationLimitRoot, 2)
-  this.separationDistance = Math.pow(opts.separationDistance || 60, 2)
-  this.alignmentDistance = Math.pow(opts.alignmentDistance || 180, 2)
-  this.cohesionDistance = Math.pow(opts.cohesionDistance || 180, 2)
-  this.separationForce = opts.separationForce || 0.15
-  this.cohesionForce = opts.cohesionForce || 0.1
-  this.alignmentForce = opts.alignmentForce || opts.alignment || 0.25
-  this.attractors = opts.attractors || []
+  this.speedLimit = opts.speedLimit || 1;
+  this.accelerationLimit = opts.accelerationLimit || 0.03;
+  this.separationDistance = opts.separationDistance || 20;
+  this.alignmentDistance = opts.alignmentDistance || 180;
+  this.cohesionDistance = opts.cohesionDistance || 100;
+  this.separationForce = opts.separationForce || 2;
+  this.cohesionForce = opts.cohesionForce || 1;
+  this.alignmentForce = opts.alignmentForce || opts.alignment || 4;
+  this.attractors = opts.attractors || [];
 
-  var boids = this.boids = []
-  for (var i = 0, l = opts.boids === undefined ? 50 : opts.boids; i < l; i += 1) {
-    boids[i] = [
-        Math.random()*25, Math.random()*25 // position
-      , 0, 0                               // speed
-      , 0, 0                               // acceleration
-    ]
+  var boids = this.boids = [{
+    position: new Vector(20, 0),
+    speed: new Vector(0, 1) 
+  },{
+    position: new Vector(-20, 0),
+    speed: new Vector(0, 1) 
+  }];
+
+  for (var i = 0, l = opts.boids === undefined ? 150 : opts.boids; i < l; i += 1) {
+    boids[i] = {
+      position: new Vector(Math.random()*25, Math.random()*25),
+      speed: new Vector(0, 0),
+      acceleration: new Vector(0, 0)
+    };
   }
 
   this.on('tick', function() {
-    callback(boids)
-  })
+    callback(boids);
+  });
 }
-inherits(Boids, EventEmitter)
+inherits(Boids, EventEmitter);
+
+Boids.prototype.calcCohesion = function(boid) {
+  var total = new Vector(0, 0);
+  var count = 0;
+  
+  for(var i=0; i<this.boids.length; i++) {
+    var target = this.boids[i];
+    if(boid === target)
+      continue;
+
+    var dist = boid.position.distance(target.position);
+    if(dist < this.cohesionDistance && 
+        isInFrontOf(boid, target.position)) {
+      total = total.add(target.position);
+      count++;
+    }
+  }
+
+  if( count === 0) 
+    return new Vector(0, 0);
+
+  return total
+    .divideBy(count)
+    .subtract(boid.position)
+    .normalize()
+    .subtract(boid.speed)
+    .limit(this.accelerationLimit);
+};
+
+Boids.prototype.calcSeparation = function(boid) {
+  var total = new Vector(0, 0);
+  var count = 0;
+
+  for(var i=0; i<this.boids.length; i++) {
+    var target = this.boids[i];
+    if(boid === target)
+      continue;
+
+    var dist = boid.position.distance(target.position);
+    if(dist < this.separationDistance) {
+      total = total.add(
+        boid.position
+          .subtract(target.position)
+          .normalize()
+          .divideBy(dist));
+      count++;
+    }
+  }
+
+  if(count === 0) 
+    return new Vector(0, 0);
+
+  return total
+    .divideBy(count)
+    .normalize()
+    .subtract(boid.speed)
+    .limit(this.accelerationLimit);
+};
+
+Boids.prototype.calcAlignment = function(boid) {
+  var total = new Vector(0, 0);
+  var count = 0;
+
+  for(var i=0; i<this.boids.length; i++) {
+    var target = this.boids[i];
+    if(boid === target)
+      continue;
+
+    var dist = boid.position.distance(target.position);
+    if(dist < this.alignmentDistance && 
+        isInFrontOf(boid, target.position)) {
+      total = total.add(boid.speed);
+      count++;
+    }
+  }
+
+  if (count === 0)
+    return new Vector(0, 0);
+
+  return total
+    .divideBy(count)
+    .normalize()
+    .subtract(boid.speed)
+    .limit(this.accelerationLimit);
+};
 
 Boids.prototype.tick = function() {
-  var boids = this.boids
-    , sepDist = this.separationDistance
-    , sepForce = this.separationForce
-    , cohDist = this.cohesionDistance
-    , cohForce = this.cohesionForce
-    , aliDist = this.alignmentDistance
-    , aliForce = this.alignmentForce
-    , speedLimit = this.speedLimit
-    , accelerationLimit = this.accelerationLimit
-    , accelerationLimitRoot = this.accelerationLimitRoot
-    , speedLimitRoot = this.speedLimitRoot
-    , size = boids.length
-    , current = size
-    , sforceX, sforceY
-    , cforceX, cforceY
-    , aforceX, aforceY
-    , spareX, spareY
-    , attractors = this.attractors
-    , attractorCount = attractors.length
-    , distSquared
-    , currPos
-    , targPos
-    , length
-    , target
 
-  while (current--) {
-    sforceX = 0; sforceY = 0
-    cforceX = 0; cforceY = 0
-    aforceX = 0; aforceY = 0
-    currPos = boids[current]
+  var boid;
+  for(var i=0; i<this.boids.length; i++) {
+    boid = this.boids[i];
+    var cohesion = this
+      .calcCohesion(boid)
+      .multiplyBy(this.cohesionForce);
+    var separation = this
+      .calcSeparation(boid)
+      .multiplyBy(this.separationForce);
+    var alignment = this
+      .calcAlignment(boid)
+      .multiplyBy(this.alignmentForce);
 
-    // Attractors
-    target = attractorCount
-    while (target--) {
-      attractor = attractors[target]
-      spareX = currPos[0] - attractor[0]
-      spareY = currPos[1] - attractor[1]
-      distSquared = spareX*spareX + spareY*spareY
-
-      if (distSquared < attractor[2]*attractor[2]) {
-        length = sqrt(spareX*spareX+spareY*spareY)
-        boids[current][SPEEDX] -= (attractor[3] * spareX / length) || 0
-        boids[current][SPEEDY] -= (attractor[3] * spareY / length) || 0
-      }
-    }
-
-    target = size
-    while (target--) {
-      if (target === current) continue
-      spareX = currPos[0] - boids[target][0]
-      spareY = currPos[1] - boids[target][1]
-      distSquared = spareX*spareX + spareY*spareY
-
-      if (distSquared < sepDist) {
-        sforceX += spareX
-        sforceY += spareY
-      } else {
-        if (distSquared < cohDist) {
-          cforceX += spareX
-          cforceY += spareY
-        }
-        if (distSquared < aliDist) {
-          aforceX += boids[target][SPEEDX]
-          aforceY += boids[target][SPEEDY]
-        }
-      }
-    }
-
-    // Separation
-    length = sqrt(sforceX*sforceX + sforceY*sforceY)
-    boids[current][ACCELERATIONX] += (sepForce * sforceX / length) || 0
-    boids[current][ACCELERATIONY] += (sepForce * sforceY / length) || 0
-    // Cohesion
-    length = sqrt(cforceX*cforceX + cforceY*cforceY)
-    boids[current][ACCELERATIONX] -= (cohForce * cforceX / length) || 0
-    boids[current][ACCELERATIONY] -= (cohForce * cforceY / length) || 0
-    // Alignment
-    length = sqrt(aforceX*aforceX + aforceY*aforceY)
-    boids[current][ACCELERATIONX] -= (aliForce * aforceX / length) || 0
-    boids[current][ACCELERATIONY] -= (aliForce * aforceY / length) || 0
-  }
-  current = size
-
-  // Apply speed/acceleration for
-  // this tick
-  while (current--) {
-    if (accelerationLimit) {
-      distSquared = boids[current][ACCELERATIONX]*boids[current][ACCELERATIONX] + boids[current][ACCELERATIONY]*boids[current][ACCELERATIONY]
-      if (distSquared > accelerationLimit) {
-        ratio = accelerationLimitRoot / sqrt(distSquared)
-        boids[current][ACCELERATIONX] *= ratio
-        boids[current][ACCELERATIONY] *= ratio
-      }
-    }
-
-    boids[current][SPEEDX] += boids[current][ACCELERATIONX]
-    boids[current][SPEEDY] += boids[current][ACCELERATIONY]
-
-    if (speedLimit) {
-      distSquared = boids[current][SPEEDX]*boids[current][SPEEDX] + boids[current][SPEEDY]*boids[current][SPEEDY]
-      if (distSquared > speedLimit) {
-        ratio = speedLimitRoot / sqrt(distSquared)
-        boids[current][SPEEDX] *= ratio
-        boids[current][SPEEDY] *= ratio
-      }
-    }
-
-    boids[current][POSITIONX] += boids[current][SPEEDX]
-    boids[current][POSITIONY] += boids[current][SPEEDY]
+    boid.acceleration = cohesion.add(separation).add(alignment);
   }
 
-  this.emit('tick', boids)
+  for(var j=0; j<this.boids.length; j++) {
+    boid = this.boids[j];
+    boid.speed = boid.speed
+      .add(boid.acceleration)
+      .limit(this.speedLimit);
+
+    boid.position = boid.position.add(boid.speed);
+    boid.acceleration = new Vector(0, 0);
+  }
+
+  this.emit('tick', this.boids);
+};
+
+function isInFrontOf(boid, point) {
+  return boid.position.angle( boid.position.add(boid.speed), point) <= 
+    ( Math.PI / 2);
 }
 
-},{"events":7,"inherits":8}],8:[function(require,module,exports){
+
+},{"events":8,"./vector":1,"inherits":9}],9:[function(require,module,exports){
 module.exports = inherits
 
 function inherits (c, p, proto) {
@@ -539,7 +613,7 @@ function inherits (c, p, proto) {
 //inherits(Child, Parent)
 //new Child
 
-},{}],2:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var EventEmitter = require('events').EventEmitter
   , inherits = require('inherits')
 
@@ -580,7 +654,7 @@ fps.prototype.tick = function() {
 }
 
 
-},{"events":7,"inherits":8}],3:[function(require,module,exports){
+},{"events":8,"inherits":9}],6:[function(require,module,exports){
 var raf = require('raf')
   , EventEmitter = require('events').EventEmitter
 
@@ -609,7 +683,7 @@ function ticker(element, rate, limit) {
   return emitter
 }
 
-},{"events":7,"raf":9}],9:[function(require,module,exports){
+},{"events":8,"raf":10}],10:[function(require,module,exports){
 (function(){module.exports = raf
 
 var EE = require('events').EventEmitter
@@ -659,5 +733,5 @@ raf.now = now
 
 
 })()
-},{"events":7}]},{},[1])
+},{"events":8}]},{},[2])
 ;
