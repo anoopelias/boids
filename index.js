@@ -130,8 +130,9 @@ Boids.prototype.calcAlignment = function(boid) {
 
 Boids.prototype.tick = function() {
 
+  var boid;
   for(var i=0; i<this.boids.length; i++) {
-    var boid = this.boids[i];
+    boid = this.boids[i];
     var cohesion = this
       .calcCohesion(boid)
       .multiplyBy(this.cohesionForce);
@@ -145,8 +146,8 @@ Boids.prototype.tick = function() {
     boid.acceleration = cohesion.add(separation).add(alignment);
   }
 
-  for(var i=0; i<this.boids.length; i++) {
-    var boid = this.boids[i];
+  for(var j=0; j<this.boids.length; j++) {
+    boid = this.boids[j];
     boid.speed = boid.speed
       .add(boid.acceleration)
       .limit(this.speedLimit);
@@ -159,8 +160,7 @@ Boids.prototype.tick = function() {
 };
 
 function isInFrontOf(boid, point) {
-  return boid.position.angle(
-      boid.position.add(boid.speed), point)
-    <= ( Math.PI / 2);
+  return boid.position.angle( boid.position.add(boid.speed), point) <= 
+    ( Math.PI / 2);
 }
 
