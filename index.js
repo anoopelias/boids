@@ -13,21 +13,15 @@ function Boids(opts, callback) {
 
   this.speedLimit = opts.speedLimit || 1;
   this.accelerationLimit = opts.accelerationLimit || 0.03;
-  this.separationDistance = opts.separationDistance || 20;
-  this.alignmentDistance = opts.alignmentDistance || 180;
-  this.cohesionDistance = opts.cohesionDistance || 100;
+  this.separationDistance = opts.separationDistance || 30;
+  this.alignmentDistance = opts.alignmentDistance || 60;
+  this.cohesionDistance = opts.cohesionDistance || 60;
   this.separationForce = opts.separationForce || 2;
   this.cohesionForce = opts.cohesionForce || 1;
-  this.alignmentForce = opts.alignmentForce || opts.alignment || 4;
+  this.alignmentForce = opts.alignmentForce || opts.alignment || 1;
   this.attractors = opts.attractors || [];
 
-  var boids = this.boids = [{
-    position: new Vector(20, 0),
-    speed: new Vector(0, 1) 
-  },{
-    position: new Vector(-20, 0),
-    speed: new Vector(0, 1) 
-  }];
+  var boids = this.boids = [];
 
   for (var i = 0, l = opts.boids === undefined ? 150 : opts.boids; i < l; i += 1) {
     boids[i] = {
@@ -113,7 +107,7 @@ Boids.prototype.calcAlignment = function(boid) {
     var dist = boid.position.distance(target.position);
     if(dist < this.alignmentDistance && 
         isInFrontOf(boid, target.position)) {
-      total = total.add(boid.speed);
+      total = total.add(target.speed);
       count++;
     }
   }
