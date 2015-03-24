@@ -155,6 +155,6 @@ Boids.prototype.tick = function() {
 
 function isInFrontOf(boid, point) {
   return boid.position.angle( boid.position.add(boid.speed), point) <= 
-    ( Math.PI / 2);
+    ( Math.PI / 3);
 }
 
