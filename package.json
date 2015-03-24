@@ -1,5 +1,6 @@
 {
   "name": "boids",
+  "description": "A fast JavaScript implementation of the boids algorithm ",
   "version": "1.0.0",
   "dependencies": {
     "inherits": "~1.0.0"
@@ -14,16 +15,15 @@
     "ticker": "0.0.1"
   },
   "gitHead": "d450d79f6388cb739e55a84b11c5b38660897ac1",
-  "description": "ERROR: No README.md file found!",
   "main": "index.js",
   "scripts": {
-    "test": "jshint index.js demo.js",
+    "test": "jshint index.js demo.js vector.js",
     "prepublish": "node_modules/.bin/browserify demo.js -o bundle.js",
     "start": "node_modules/.bin/beefy demo.js:bundle.js"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/hughsk/boids.git"
+    "url": "git://github.com/anoopelias/boids.git"
   },
   "keywords": [
     "boids",
@@ -31,6 +31,6 @@
     "algorithm",
     "emergence"
   ],
-  "author": "Hugh Kennedy <hughskennedy@gmail.com> (http://hughskennedy.com/)",
+  "author": "Anoop Elias<anoopelias@gmail.com> (http:/anoopelias.github.io/)",
   "license": "MIT"
 }
