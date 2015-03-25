@@ -10,8 +10,8 @@ describe('Boid', function() {
     alignmentForce: 2
   };
 
-  var Boids = require('../');
-  var Vector = require('../vector');
+  var Boids = require('../js/');
+  var Vector = require('../js/vector');
   var assert = require('assert');
 
   var boid1 = {

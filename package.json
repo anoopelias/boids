@@ -18,9 +18,9 @@
   "gitHead": "d450d79f6388cb739e55a84b11c5b38660897ac1",
   "main": "index.js",
   "scripts": {
-    "test": "jshint index.js demo.js vector.js benchmark.js && mocha test",
-    "prepublish": "node_modules/.bin/browserify demo.js -o bundle.js",
-    "start": "node_modules/.bin/beefy demo.js:bundle.js"
+    "test": "jshint js/ test/ && mocha test",
+    "prepublish": "node_modules/.bin/browserify js/demo.js -o bundle.js",
+    "start": "node_modules/.bin/beefy js/demo.js:bundle.js"
   },
   "repository": {
     "type": "git",
