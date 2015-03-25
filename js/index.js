@@ -75,7 +75,7 @@ Boids.prototype.calcSeparation = function(boid) {
       continue;
 
     var dist = boid.position.distance(target.position);
-    if(dist < this.separationDistance) {
+    if(dist !== 0 && dist < this.separationDistance) {
       total = total.add(
         target.position
           .subtract(boid.position)

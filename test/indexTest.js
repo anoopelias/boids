@@ -60,6 +60,15 @@ describe('Boid', function() {
     assertApprox(sep.y, -0.0212, 4);
 
   });
+  it('should have zero separation for boids in the same location', function() {
+    var boids = new Boids(defaultOptions);
+    boids.boids = [boid1, Object.create(boid1)];
+    var sep = boids.calcSeparation(boid1);
+    assert.equal(sep.x, 0);
+    assert.equal(sep.y, 0);
+
+  });
+
 
   it('should calculate cohesion', function() {
     var boids = new Boids(defaultOptions);
