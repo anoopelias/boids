@@ -60,4 +60,9 @@ Vector.prototype.angle = function(p1, p2) {
   return Math.acos(v1.x * v2.x + v1.y * v2.y);
 };
 
+Vector.prototype.compare = function(that, y) {
+  return (y && (this.y - that.y || this.x - that.x)) ||
+    (this.x - that.x || this.y - that.y);
+};
+
 module.exports = Vector;
