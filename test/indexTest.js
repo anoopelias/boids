@@ -109,11 +109,50 @@ describe('Boid', function() {
     assert.equal(sep.y, 0);
   });
 
+  it('should tick', function() {
+    var boids = new Boids(defaultOptions);
+    boids.boids = [boid1, boid2, boid3, boid4];
+
+    boids.tick();
+    assertBoid(boid1, [0.5212, 0.5212, 0.5212, 0.5212, 0, 0]);
+    assertBoid(boid2, [10.0424, 10.0424, 0.0424, 0.0424, 0, 0]);
+    assertBoid(boid3, [60, 60, 0, 0, 0, 0]);
+    assertBoid(boid4, [-10.0424, -10.0424, -0.0424, -0.0424, 0, 0]);
+
+    boids.tick();
+    assertBoid(boid1, [1.0636, 1.0636, 0.5424, 0.5424, 0, 0]);
+    assertBoid(boid2, [10.1273, 10.1273, 0.0849, 0.0849, 0, 0]);
+    assertBoid(boid3, [60, 60, 0, 0, 0, 0]);
+    assertBoid(boid4, [-10.1273, -10.1273, -0.0849, -0.0849, 0, 0]);
+
+    boids.tick();
+    assertBoid(boid1, [1.6273, 1.6273, 0.5636, 0.5636, 0, 0]);
+    assertBoid(boid2, [10.2546, 10.2546, 0.1273, 0.1273, 0, 0]);
+    assertBoid(boid3, [60, 60, 0, 0, 0, 0]);
+    assertBoid(boid4, [-10.2546, -10.2546, -0.1273, -0.1273, 0, 0]);
+
+    boids.tick();
+    assertBoid(boid1, [2.2121, 2.2121, 0.5849, 0.5849, 0, 0]);
+    assertBoid(boid2, [10.4243, 10.4243, 0.1697, 0.1697, 0, 0]);
+    assertBoid(boid3, [60, 60, 0, 0, 0, 0]);
+    assertBoid(boid4, [-10.4243, -10.4243, -0.1697, -0.1697, 0, 0]);
+
+  });
+
+  function assertBoid(boid, val) {
+    assertApprox(boid.position.x, val[0], 4);
+    assertApprox(boid.position.y, val[1], 4);
+
+    assertApprox(boid.speed.x, val[2], 4);
+    assertApprox(boid.speed.y, val[3], 4);
+
+    assertApprox(boid.acceleration.x, val[4], 4);
+    assertApprox(boid.acceleration.y, val[5], 4);
+
+  }
+
   function assertApprox(val, val2, d) {
-    var power = Math.pow(10, d);
-    var newVal = Math.round(power * val);
-    var targetVal = val2 * power;
-    assert.equal(newVal, targetVal);
+    assert.equal(val.toFixed(d), val2.toFixed(d));
   }
 
 });
