@@ -19,8 +19,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jshint js/ test/ && mocha test",
-    "prepublish": "node_modules/.bin/browserify js/demo.js -o bundle.js",
-    "start": "node_modules/.bin/beefy js/demo.js:bundle.js"
+    "prepublish": "browserify js/demo.js -o bundle.js",
+    "start": "beefy js/demo.js:bundle.js"
   },
   "repository": {
     "type": "git",
