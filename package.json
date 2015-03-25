@@ -11,13 +11,14 @@
     "debounce": "0.0.2",
     "fps": "0.0.3",
     "jshint": "^2.6.3",
+    "mocha": "^2.2.1",
     "raf": "0.0.2",
     "ticker": "0.0.1"
   },
   "gitHead": "d450d79f6388cb739e55a84b11c5b38660897ac1",
   "main": "index.js",
   "scripts": {
-    "test": "jshint index.js demo.js vector.js",
+    "test": "jshint index.js demo.js vector.js benchmark.js && mocha test",
     "prepublish": "node_modules/.bin/browserify demo.js -o bundle.js",
     "start": "node_modules/.bin/beefy demo.js:bundle.js"
   },
