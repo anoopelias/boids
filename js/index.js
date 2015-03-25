@@ -91,7 +91,7 @@ Boids.prototype.calcSeparation = function(boid) {
   return total
     .divideBy(count)
     .normalize()
-    .subtract(boid.speed)
+    .add(boid.speed) // Adding speed instead of subtracting because separation is repulsive
     .limit(this.accelerationLimit);
 };
 
