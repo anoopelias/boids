@@ -77,8 +77,8 @@ Boids.prototype.calcSeparation = function(boid) {
     var dist = boid.position.distance(target.position);
     if(dist < this.separationDistance) {
       total = total.add(
-        boid.position
-          .subtract(target.position)
+        target.position
+          .subtract(boid.position)
           .normalize()
           .divideBy(dist));
       count++;
@@ -137,7 +137,7 @@ Boids.prototype.tick = function() {
       .calcAlignment(boid)
       .multiplyBy(this.alignmentForce);
 
-    boid.acceleration = cohesion.add(separation).add(alignment);
+    boid.acceleration = cohesion.add(alignment).subtract(separation);
   }
 
   for(var j=0; j<this.boids.length; j++) {
