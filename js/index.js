@@ -127,17 +127,14 @@ Boids.prototype.tick = function() {
   var boid;
   for(var i=0; i<this.boids.length; i++) {
     boid = this.boids[i];
-    var cohesion = this
-      .calcCohesion(boid)
-      .multiplyBy(this.cohesionForce);
-    var separation = this
-      .calcSeparation(boid)
-      .multiplyBy(this.separationForce);
-    var alignment = this
-      .calcAlignment(boid)
-      .multiplyBy(this.alignmentForce);
 
-    boid.acceleration = cohesion.add(alignment).subtract(separation);
+    boid.acceleration = this.calcCohesion(boid)
+      .multiplyBy(this.cohesionForce)
+      .add(this.calcAlignment(boid)
+        .multiplyBy(this.alignmentForce))
+      .subtract(this.calcSeparation(boid)
+        .multiplyBy(this.separationForce));
+
   }
 
   for(var j=0; j<this.boids.length; j++) {
