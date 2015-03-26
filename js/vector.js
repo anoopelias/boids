@@ -65,4 +65,8 @@ Vector.prototype.compare = function(that, y) {
     (this.x - that.x || this.y - that.y);
 };
 
+Vector.prototype.toString = function() {
+  return "{x:" + this.x + ", y:" + this.y + "}";
+}
+
 module.exports = Vector;
