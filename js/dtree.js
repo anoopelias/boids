@@ -18,36 +18,68 @@ Dtree.prototype.toString = function() {
 };
 
 Dtree.prototype.neighbors = function(point, radius) {
+  return neighbors(this.root, point, radius);
 };
 
-function insert(node, vector, isOdd) {
+function insert(node, vector, isEven) {
   if(!node) {
     return { value : vector };
   }
 
-  var cmp = vector.compare(node.value, isOdd);
+  var cmp = vector.compare(node.value, isEven);
   if(cmp < 0) {
-    node.left = insert(node.left, vector, !isOdd);
+    node.left = insert(node.left, vector, !isEven);
   } else if (cmp > 0) {
-    node.right = insert(node.right, vector, !isOdd);
+    node.right = insert(node.right, vector, !isEven);
   }
 
   return node;
 }
 
-function contains(node, vector, isOdd) {
+function contains(node, vector, isEven) {
   if(!node) 
     return false;
 
-  var cmp = vector.compare(node.value, isOdd);
+  var cmp = vector.compare(node.value, isEven);
   
   if(cmp < 0)
-    return contains(node.left, vector, !isOdd);
+    return contains(node.left, vector, !isEven);
   else if (cmp > 0)
-    return contains(node.right, vector, !isOdd);
+    return contains(node.right, vector, !isEven);
 
   return true;
 
+}
+
+function neighbors(node, point, radius, isEven) {
+  var neighborPoints = [],
+    leftPoints = [],
+    rightPoints = [];
+
+  if(!node)
+    return neighborPoints;
+
+  if(node.value.distance(point) <= radius) {
+    neighborPoints.push(node.value);
+  }
+
+  var cmp = point.compare(node.value, isEven);
+  var distP2L = distanceToLine(point, node.value, isEven);
+
+  if(cmp <= 0 || distP2L <= radius) {
+    leftPoints = neighbors(node.left, point, radius, !isEven);
+  }
+
+  if(cmp >= 0 || distP2L <= radius) {
+    rightPoints = neighbors(node.right, point, radius, !isEven);
+  }
+
+  return neighborPoints.concat(leftPoints).concat(rightPoints);
+
+}
+
+function distanceToLine(a, b, horizontal) {
+  return Math.abs(horizontal ? a.y - b.y : a.x - b.x);
 }
 
 function toString(node) {
