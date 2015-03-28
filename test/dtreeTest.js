@@ -86,9 +86,11 @@ describe("Dtree", function() {
 
   it("should be able find all neighbors similar to brute force", function() {
     var points = [], 
-      dtree = new Dtree();
+      dtree = new Dtree(),
+      radius = 60,
+      n = 500;
 
-    for(var i=0; i<500; i++) {
+    for(var i=0; i<n; i++) {
       var v = new Vector(Math.random() * 400 - 200, Math.random() * 400 - 200);
       points.push(v);
       dtree.insert(v);
@@ -98,11 +100,11 @@ describe("Dtree", function() {
       var point = points[j],
         bruteNeighbors = [];
 
-      var treeNeighbors = dtree.neighbors(point, 60);
+      var treeNeighbors = dtree.neighbors(point, radius);
 
       for(var k=0; k<points.length; k++) {
         var other = points[k];
-        if(point.distance(other) < 60) {
+        if(point.distance(other) < radius) {
           bruteNeighbors.push(other);
         }
       }
