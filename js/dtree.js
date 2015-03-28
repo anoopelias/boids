@@ -5,12 +5,12 @@ function Dtree() {
   this.size = 0;
 }
 
-Dtree.prototype.insert = function(vector) {
-  this.root = insert(this.root, vector);
+Dtree.prototype.insert = function(obj) {
+  this.root = insert(this.root, obj);
 };
 
-Dtree.prototype.contains = function(vector) {
-  return contains(this.root, vector);
+Dtree.prototype.contains = function(obj) {
+  return contains(this.root, obj);
 };
 
 Dtree.prototype.toString = function() {
@@ -21,31 +21,31 @@ Dtree.prototype.neighbors = function(point, radius) {
   return neighbors(this.root, point, radius);
 };
 
-function insert(node, vector, isEven) {
+function insert(node, obj, isEven) {
   if(!node) {
-    return { value : vector };
+    return { value : obj };
   }
 
-  var cmp = vector.compare(node.value, isEven);
+  var cmp = obj.compare(node.value, isEven);
   if(cmp < 0) {
-    node.left = insert(node.left, vector, !isEven);
+    node.left = insert(node.left, obj, !isEven);
   } else if (cmp > 0) {
-    node.right = insert(node.right, vector, !isEven);
+    node.right = insert(node.right, obj, !isEven);
   }
 
   return node;
 }
 
-function contains(node, vector, isEven) {
+function contains(node, obj, isEven) {
   if(!node) 
     return false;
 
-  var cmp = vector.compare(node.value, isEven);
+  var cmp = obj.compare(node.value, isEven);
   
   if(cmp < 0)
-    return contains(node.left, vector, !isEven);
+    return contains(node.left, obj, !isEven);
   else if (cmp > 0)
-    return contains(node.right, vector, !isEven);
+    return contains(node.right, obj, !isEven);
 
   return true;
 
@@ -59,12 +59,12 @@ function neighbors(node, point, radius, isEven) {
   if(!node)
     return neighborPoints;
 
-  if(node.value.distance(point) <= radius) {
+  if(node.value.position.distance(point) <= radius) {
     neighborPoints.push(node.value);
   }
 
-  var cmp = point.compare(node.value, isEven);
-  var distP2L = distanceToLine(point, node.value, isEven);
+  var cmp = point.compare(node.value.position, isEven);
+  var distP2L = distanceToLine(point, node.value.position, isEven);
 
   if(cmp <= 0 || distP2L <= radius) {
     leftPoints = neighbors(node.left, point, radius, !isEven);
