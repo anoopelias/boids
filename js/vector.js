@@ -67,6 +67,6 @@ Vector.prototype.compare = function(that, y) {
 
 Vector.prototype.toString = function() {
   return "{x:" + this.x + ", y:" + this.y + "}";
-}
+};
 
 module.exports = Vector;

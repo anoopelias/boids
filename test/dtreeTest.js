@@ -10,11 +10,11 @@ describe("Dtree", function() {
 
   Obj.prototype.compare = function(that, isEven) {
     return this.position.compare(that.position, isEven);
-  }
+  };
 
   Obj.prototype.toString = function() {
     return this.position.toString();
-  }
+  };
 
   it("should be able to search on root node", function() {
     var dtree = new Dtree();

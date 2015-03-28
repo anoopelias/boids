@@ -87,7 +87,7 @@ function toString(node) {
     return '';
   }
 
-  return '{ L:' + toString(node.left)
-    + ', N:' + node.value
-    + ', R:' + toString(node.right) + '}';
+  return '{ L:' + toString(node.left) + 
+    ', N:' + node.value + 
+    ', R:' + toString(node.right) + '}';
 }
