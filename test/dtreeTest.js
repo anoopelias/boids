@@ -61,39 +61,39 @@ describe("Dtree", function() {
 
     var dtree = new Dtree();
 
-    var vec67 = new Obj(6, 7),
-      vecM10 = new Obj(-1, 0),
-      vec1010 = new Obj(10, 10);
+    var obj67 = new Obj(6, 7),
+      objM10 = new Obj(-1, 0),
+      obj1010 = new Obj(10, 10);
 
-    dtree.insert(vec67);
-    dtree.insert(vecM10);
-    dtree.insert(vec1010);
+    dtree.insert(obj67);
+    dtree.insert(objM10);
+    dtree.insert(obj1010);
 
     var neighbors = dtree.neighbors(new Vector(3, 3), 5); 
-    assert(arrayContains(neighbors, vec67));
-    assert(arrayContains(neighbors, vecM10));
-    assert(!arrayContains(neighbors, vec1010));
+    assert(arrayContains(neighbors, obj67));
+    assert(arrayContains(neighbors, objM10));
+    assert(!arrayContains(neighbors, obj1010));
 
   });
 
   it("should be able find self as a neighbor", function() {
     var dtree = new Dtree();
 
-    var vec67 = new Obj(6, 7),
-      vecM10 = new Obj(-1, 0),
-      vec1010 = new Obj(10, 10),
-      vec33 = new Obj(3, 3);
+    var obj67 = new Obj(6, 7),
+      objM10 = new Obj(-1, 0),
+      obj1010 = new Obj(10, 10),
+      obj33 = new Obj(3, 3);
 
-    dtree.insert(vec67);
-    dtree.insert(vecM10);
-    dtree.insert(vec1010);
-    dtree.insert(vec33);
+    dtree.insert(obj67);
+    dtree.insert(objM10);
+    dtree.insert(obj1010);
+    dtree.insert(obj33);
 
     var neighbors = dtree.neighbors(new Vector(3, 3), 2); 
-    assert(arrayContains(neighbors, vec33));
-    assert(!arrayContains(neighbors, vec67));
-    assert(!arrayContains(neighbors, vecM10));
-    assert(!arrayContains(neighbors, vec1010));
+    assert(arrayContains(neighbors, obj33));
+    assert(!arrayContains(neighbors, obj67));
+    assert(!arrayContains(neighbors, objM10));
+    assert(!arrayContains(neighbors, obj1010));
   });
 
   it("should be able find all neighbors similar to brute force", function() {
