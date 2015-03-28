@@ -1,6 +1,8 @@
 var EventEmitter = require('events').EventEmitter, 
   inherits = require('inherits'),
-  Vector = require('./vector');
+  Vector = require('./vector'),
+  Dtree = require('./dtree'),
+  Boid = require('./boid');
 
 module.exports = Boids;
 
@@ -24,11 +26,10 @@ function Boids(opts, callback) {
   var boids = this.boids = [];
 
   for (var i = 0, l = opts.boids === undefined ? 150 : opts.boids; i < l; i += 1) {
-    boids[i] = {
-      position: new Vector(Math.random()*25, Math.random()*25),
-      speed: new Vector(0, 0),
-      acceleration: new Vector(0, 0)
-    };
+    boids[i] = new Boid( 
+      new Vector(Math.random()*25, Math.random()*25),
+      new Vector(0, 0)
+    );
   }
 
   this.on('tick', function() {
@@ -37,18 +38,24 @@ function Boids(opts, callback) {
 }
 inherits(Boids, EventEmitter);
 
-Boids.prototype.calcCohesion = function(boid) {
-  var total = new Vector(0, 0);
-  var count = 0;
-  
+Boids.prototype.tree = function() {
+  this.dtree = new Dtree();
   for(var i=0; i<this.boids.length; i++) {
-    var target = this.boids[i];
+    this.dtree.insert(this.boids[i]);
+  }
+};
+
+Boids.prototype.calcCohesion = function(boid) {
+  var total = new Vector(0, 0),
+    neighbors = this.dtree.neighbors(boid.position, this.alignmentDistance),
+    count = 0;
+  
+  for(var i=0; i<neighbors.length; i++) {
+    var target = neighbors[i];
     if(boid === target)
       continue;
 
-    var dist = boid.position.distance(target.position);
-    if(dist < this.cohesionDistance && 
-        isInFrontOf(boid, target.position)) {
+    if(isInFrontOf(boid, target.position)) {
       total = total.add(target.position);
       count++;
     }
@@ -66,23 +73,25 @@ Boids.prototype.calcCohesion = function(boid) {
 };
 
 Boids.prototype.calcSeparation = function(boid) {
-  var total = new Vector(0, 0);
-  var count = 0;
+  var total = new Vector(0, 0),
+    neighbors = this.dtree.neighbors(boid.position, this.separationDistance),
+    count = 0; 
 
-  for(var i=0; i<this.boids.length; i++) {
-    var target = this.boids[i];
+  for(var i=0; i<neighbors.length; i++) {
+    var target = neighbors[i];
     if(boid === target)
       continue;
 
-    var dist = boid.position.distance(target.position);
-    if(dist !== 0 && dist < this.separationDistance) {
-      total = total.add(
-        target.position
-          .subtract(boid.position)
-          .normalize()
-          .divideBy(dist));
-      count++;
-    }
+    total = total.add(
+      target.position
+        .subtract(boid.position)
+        .normalize()
+        .divideBy(
+          target.position.distance(boid.position)
+        )
+      );
+
+    count++;
   }
 
   if(count === 0) 
@@ -96,17 +105,16 @@ Boids.prototype.calcSeparation = function(boid) {
 };
 
 Boids.prototype.calcAlignment = function(boid) {
-  var total = new Vector(0, 0);
-  var count = 0;
+  var total = new Vector(0, 0),
+    neighbors = this.dtree.neighbors(boid.position, this.alignmentDistance),
+    count = 0;
 
-  for(var i=0; i<this.boids.length; i++) {
-    var target = this.boids[i];
+  for(var i=0; i<neighbors.length; i++) {
+    var target = neighbors[i];
     if(boid === target)
       continue;
 
-    var dist = boid.position.distance(target.position);
-    if(dist < this.alignmentDistance && 
-        isInFrontOf(boid, target.position)) {
+    if(isInFrontOf(boid, target.position)) {
       total = total.add(target.speed);
       count++;
     }
@@ -125,6 +133,8 @@ Boids.prototype.calcAlignment = function(boid) {
 Boids.prototype.tick = function() {
 
   var boid;
+  this.tree();
+
   for(var i=0; i<this.boids.length; i++) {
     boid = this.boids[i];
 
@@ -144,7 +154,7 @@ Boids.prototype.tick = function() {
       .limit(this.speedLimit);
 
     boid.position = boid.position.add(boid.speed);
-    boid.acceleration = new Vector(0, 0);
+    delete boid.acceleration;
   }
 
   this.emit('tick', this.boids);

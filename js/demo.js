@@ -2,7 +2,8 @@ var fps = require('fps'),
   ticker = require('ticker'),
   debounce = require('debounce'),
   Boids = require('./'),
-  Vector = require('./vector');
+  Vector = require('./vector'),
+  Boid = require('./boid');
 
 var attractors = [{
     x: Infinity,
@@ -62,11 +63,9 @@ var frames = fps({ every: 10, decay: 0.04 }).on('data', function(rate) {
   for (var i = 0; i < 3; i += 1) {
     if (rate <= 56 && boids.boids.length > 10) boids.boids.pop();
     if (rate >= 60 && boids.boids.length < 500) 
-      boids.boids.push({
-        position: new Vector(0,0),
-        speed: new Vector(Math.random()*6-3,Math.random()*6-3),
-        acceleration : new Vector(0,0)
-      });
+      boids.boids.push(
+        new Boid(new Vector(0,0), new Vector(Math.random()*6-3,Math.random()*6-3))
+      );
   }
   frameText.innerHTML = String(Math.round(rate));
   countText.innerHTML = String(boids.boids.length);
