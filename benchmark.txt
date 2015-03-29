@@ -45,3 +45,13 @@
 350 boids: 353 ticks/sec
 400 boids: 316 ticks/sec
 
+-- Single neigbour search per tick / boid
+50 boids: 3491 ticks/sec
+100 boids: 2530 ticks/sec
+150 boids: 1642 ticks/sec
+200 boids: 1201 ticks/sec
+250 boids: 963 ticks/sec
+300 boids: 756 ticks/sec
+350 boids: 640 ticks/sec
+400 boids: 541 ticks/sec
+450 boids: 469 ticks/sec

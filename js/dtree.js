@@ -38,7 +38,10 @@ Dtree.prototype.neighbors = function(point, radius) {
     distSq = distX * distX + distY * distY;
 
     if(distSq <= radiusSq) 
-      objects.push(node.value);
+      objects.push({
+        neighbor: node.value,
+        distSq: distSq
+      });
 
     cmp = (isEven ? (distY || distX) : (distX || distY));
     dist2line = Math.abs(isEven ? distY : distX);

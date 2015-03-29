@@ -16,12 +16,17 @@ function Boids(opts, callback) {
   this.speedLimit = opts.speedLimit || 1;
   this.accelerationLimit = opts.accelerationLimit || 0.03;
   this.separationDistance = opts.separationDistance || 30;
+  this.separationDistanceSq = Math.pow(this.separationDistance, 2);
   this.alignmentDistance = opts.alignmentDistance || 60;
+  this.alignmentDistanceSq = Math.pow(this.alignmentDistance, 2);
   this.cohesionDistance = opts.cohesionDistance || 60;
+  this.cohesionDistanceSq = Math.pow(this.cohesionDistance, 2);
   this.separationForce = opts.separationForce || 2;
   this.cohesionForce = opts.cohesionForce || 1;
   this.alignmentForce = opts.alignmentForce || opts.alignment || 1;
   this.attractors = opts.attractors || [];
+  this.maxDist = Math.max(this.separationDistance, 
+      this.cohesionDistance, this.alignmentDistance);
 
   var boids = this.boids = [];
 
@@ -38,24 +43,31 @@ function Boids(opts, callback) {
 }
 inherits(Boids, EventEmitter);
 
-Boids.prototype.tree = function() {
+Boids.prototype.init = function() {
   this.dtree = new Dtree();
   for(var i=0; i<this.boids.length; i++) {
     this.dtree.insert(this.boids[i]);
   }
 };
 
+Boids.prototype.findNeighbors = function(point) {
+  this.neighbors = this.dtree.neighbors(point, this.maxDist);
+};
+
 Boids.prototype.calcCohesion = function(boid) {
   var total = new Vector(0, 0),
-    neighbors = this.dtree.neighbors(boid.position, this.alignmentDistance),
+    distSq,
+    target,
     count = 0;
   
-  for(var i=0; i<neighbors.length; i++) {
-    var target = neighbors[i];
+  for(var i=0; i<this.neighbors.length; i++) {
+    target = this.neighbors[i].neighbor;
     if(boid === target)
       continue;
 
-    if(isInFrontOf(boid, target.position)) {
+    distSq = this.neighbors[i].distSq;
+    if(distSq < this.cohesionDistanceSq &&
+        isInFrontOf(boid, target.position)) {
       total = total.add(target.position);
       count++;
     }
@@ -74,22 +86,26 @@ Boids.prototype.calcCohesion = function(boid) {
 
 Boids.prototype.calcSeparation = function(boid) {
   var total = new Vector(0, 0),
-    neighbors = this.dtree.neighbors(boid.position, this.separationDistance),
+    target,
+    distSq,
     count = 0; 
 
-  for(var i=0; i<neighbors.length; i++) {
-    var target = neighbors[i];
+  for(var i=0; i<this.neighbors.length; i++) {
+    target = this.neighbors[i].neighbor;
     if(boid === target)
       continue;
 
-    total = total.add(
-      target.position
-        .subtract(boid.position)
-        .normalize()
-        .divideBy(
-          target.position.distance(boid.position)
-        )
-      );
+    distSq = this.neighbors[i].distSq;
+    if(distSq < this.separationDistanceSq) {
+      total = total.add(
+        target.position
+          .subtract(boid.position)
+          .normalize()
+          .divideBy(
+            target.position.distance(boid.position)
+          )
+        );
+    }
 
     count++;
   }
@@ -106,15 +122,18 @@ Boids.prototype.calcSeparation = function(boid) {
 
 Boids.prototype.calcAlignment = function(boid) {
   var total = new Vector(0, 0),
-    neighbors = this.dtree.neighbors(boid.position, this.alignmentDistance),
+    target,
+    distSq,
     count = 0;
 
-  for(var i=0; i<neighbors.length; i++) {
-    var target = neighbors[i];
+  for(var i=0; i<this.neighbors.length; i++) {
+    target = this.neighbors[i].neighbor;
     if(boid === target)
       continue;
 
-    if(isInFrontOf(boid, target.position)) {
+    distSq = this.neighbors[i].distSq;
+    if(distSq < this.alignmentDistanceSq && 
+        isInFrontOf(boid, target.position)) {
       total = total.add(target.speed);
       count++;
     }
@@ -133,10 +152,11 @@ Boids.prototype.calcAlignment = function(boid) {
 Boids.prototype.tick = function() {
 
   var boid;
-  this.tree();
+  this.init();
 
   for(var i=0; i<this.boids.length; i++) {
     boid = this.boids[i];
+    this.findNeighbors(boid.position);
 
     boid.acceleration = this.calcCohesion(boid)
       .multiplyBy(this.cohesionForce)
@@ -144,7 +164,6 @@ Boids.prototype.tick = function() {
         .multiplyBy(this.alignmentForce))
       .subtract(this.calcSeparation(boid)
         .multiplyBy(this.separationForce));
-
   }
 
   for(var j=0; j<this.boids.length; j++) {

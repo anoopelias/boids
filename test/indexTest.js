@@ -22,7 +22,8 @@ describe('Boid', function() {
   it('should calculate separation', function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid2];
-    boids.tree();
+    boids.init();
+    boids.findNeighbors(boid1.position);
     var sep = boids.calcSeparation(boid1);
     assertApprox(sep.x, 0.0212, 4);
     assertApprox(sep.y, 0.0212, 4);
@@ -32,7 +33,8 @@ describe('Boid', function() {
   it('should have zero separation for far away boids', function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid3];
-    boids.tree();
+    boids.init();
+    boids.findNeighbors(boid1.position);
     var sep = boids.calcSeparation(boid1);
     assert.equal(sep.x, 0);
     assert.equal(sep.y, 0);
@@ -41,7 +43,8 @@ describe('Boid', function() {
   it('should have non-zero separation for boids behind them', function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid4];
-    boids.tree();
+    boids.init();
+    boids.findNeighbors(boid1.position);
     var sep = boids.calcSeparation(boid1);
     assertApprox(sep.x, -0.0212, 4);
     assertApprox(sep.y, -0.0212, 4);
@@ -50,7 +53,8 @@ describe('Boid', function() {
   it('should have zero separation for boids in the same location', function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, Object.create(boid1)];
-    boids.tree();
+    boids.init();
+    boids.findNeighbors(boid1.position);
     var sep = boids.calcSeparation(boid1);
     assert.equal(sep.x, 0);
     assert.equal(sep.y, 0);
@@ -61,7 +65,8 @@ describe('Boid', function() {
   it('should calculate cohesion', function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid2];
-    boids.tree();
+    boids.init();
+    boids.findNeighbors(boid1.position);
     var sep = boids.calcCohesion(boid1);
     assertApprox(sep.x, 0.0212, 4);
     assertApprox(sep.y, 0.0212, 4);
@@ -70,7 +75,8 @@ describe('Boid', function() {
   it('should have zero cohesion for far away boids', function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid3];
-    boids.tree();
+    boids.init();
+    boids.findNeighbors(boid1.position);
     var sep = boids.calcCohesion(boid1);
     assert.equal(sep.x, 0);
     assert.equal(sep.y, 0);
@@ -79,7 +85,8 @@ describe('Boid', function() {
   it('should have zero cohesion for boids behind them', function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid4];
-    boids.tree();
+    boids.init();
+    boids.findNeighbors(boid1.position);
     var sep = boids.calcCohesion(boid1);
     assert.equal(sep.x, 0);
     assert.equal(sep.y, 0);
@@ -88,7 +95,8 @@ describe('Boid', function() {
   it('should calculate alignment', function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid2];
-    boids.tree();
+    boids.init();
+    boids.findNeighbors(boid1.position);
     var sep = boids.calcAlignment(boid1);
     assertApprox(sep.x, -0.0212, 4);
     assertApprox(sep.y, -0.0212, 4);
@@ -97,7 +105,8 @@ describe('Boid', function() {
   it('should have zero alignment for far away boids', function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid3];
-    boids.tree();
+    boids.init();
+    boids.findNeighbors(boid1.position);
     var sep = boids.calcAlignment(boid1);
     assert.equal(sep.x, 0);
     assert.equal(sep.y, 0);
@@ -106,7 +115,8 @@ describe('Boid', function() {
   it('should have zero alignment for boids behind them', function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid4];
-    boids.tree();
+    boids.init();
+    boids.findNeighbors(boid1.position);
     var sep = boids.calcAlignment(boid1);
     assert.equal(sep.x, 0);
     assert.equal(sep.y, 0);
