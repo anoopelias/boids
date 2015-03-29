@@ -7,28 +7,28 @@ function Vector(x, y) {
 
 Vector.prototype.add = function(v) {
   return new Vector(this.x + v.x, this.y + v.y);
-}
+};
 
 Vector.prototype.distSquared = function(v) {
   return Math.pow(this.x - v.x, 2) + 
     Math.pow(this.y - v.y, 2);
-}
+};
 
 Vector.prototype.distance = function(v) {
   return Math.sqrt(this.distSquared(v));
-}
+};
 
 Vector.prototype.multiplyBy = function(s) {
   return new Vector(this.x * s, this.y * s);
-}
+};
 
 Vector.prototype.neg = function(v) {
   return new Vector(-this.x, -this.y);
-}
+};
 
 Vector.prototype.magnitude = function() {
   return this.distance(new Vector(0, 0));
-}
+};
 
 Vector.prototype.normalize = function() {
   var magnitude = this.magnitude();
@@ -37,38 +37,65 @@ Vector.prototype.normalize = function() {
     return new Vector(0, 0);
 
   return new Vector(this.x / magnitude, this.y / magnitude);
-}
+};
 
 Vector.prototype.subtract = function(v) {
   return this.add(v.neg());
-}
+};
 
 Vector.prototype.divideBy = function(s) {
   return this.multiplyBy(1 / s);
-}
+};
 
 Vector.prototype.limit = function(s) {
   if(this.magnitude() > s)
     return this.normalize().multiplyBy(s);
 
   return this;
-}
+};
 
 Vector.prototype.angle = function(p1, p2) {
   var v1 = this.subtract(p1).normalize();
   var v2 = this.subtract(p2).normalize();
 
   return Math.acos(v1.x * v2.x + v1.y * v2.y);
-}
+};
+
+Vector.prototype.compare = function(that, y) {
+  return (y && (this.y - that.y || this.x - that.x)) ||
+    (this.x - that.x || this.y - that.y);
+};
+
+Vector.prototype.toString = function() {
+  return "{x:" + this.x + ", y:" + this.y + "}";
+};
 
 module.exports = Vector;
 
 },{}],2:[function(require,module,exports){
+
+module.exports = Boid;
+
+function Boid(position, speed) {
+  this.position = position;
+  this.speed = speed;
+}
+
+Boid.prototype.compare = function(that, isEven) {
+  return this.position.compare(that.position, isEven);
+};
+
+Boid.prototype.toString = function() {
+  return this.position.toString();
+};
+
+},{}],3:[function(require,module,exports){
 var fps = require('fps'),
   ticker = require('ticker'),
   debounce = require('debounce'),
   Boids = require('./'),
-  Vector = require('./vector');
+  Vector = require('./vector'),
+  Boid = require('./boid');
 
 var attractors = [{
     x: Infinity,
@@ -128,52 +155,15 @@ var frames = fps({ every: 10, decay: 0.04 }).on('data', function(rate) {
   for (var i = 0; i < 3; i += 1) {
     if (rate <= 56 && boids.boids.length > 10) boids.boids.pop();
     if (rate >= 60 && boids.boids.length < 500) 
-      boids.boids.push({
-        position: new Vector(0,0),
-        speed: new Vector(Math.random()*6-3,Math.random()*6-3),
-        acceleration : new Vector(0,0)
-      });
+      boids.boids.push(
+        new Boid(new Vector(0,0), new Vector(Math.random()*6-3,Math.random()*6-3))
+      );
   }
   frameText.innerHTML = String(Math.round(rate));
   countText.innerHTML = String(boids.boids.length);
 });
 
-},{"./vector":1,"./":3,"fps":4,"debounce":5,"ticker":6}],5:[function(require,module,exports){
-/**
- * Debounces a function by the given threshold.
- *
- * @see http://unscriptable.com/2009/03/20/debouncing-javascript-methods/
- * @param {Function} function to wrap
- * @param {Number} timeout in ms (`100`)
- * @param {Boolean} whether to execute at the beginning (`true`)
- * @api public
- */
-
-module.exports = function debounce(func, threshold, execAsap){
-  var timeout;
-  if (false !== execAsap) execAsap = true;
-
-  return function debounced(){
-    var obj = this, args = arguments;
-
-    function delayed () {
-      if (!execAsap) {
-        func.apply(obj, args);
-      }
-      timeout = null;
-    }
-
-    if (timeout) {
-      clearTimeout(timeout);
-    } else if (execAsap) {
-      func.apply(obj, args);
-    }
-
-    timeout = setTimeout(delayed, threshold || 100);
-  };
-};
-
-},{}],7:[function(require,module,exports){
+},{"./vector":1,"./boid":2,"./":4,"fps":5,"ticker":6,"debounce":7}],8:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -228,7 +218,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 (function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
 
 var EventEmitter = exports.EventEmitter = process.EventEmitter;
@@ -414,10 +404,139 @@ EventEmitter.prototype.listeners = function(type) {
 };
 
 })(require("__browserify_process"))
-},{"__browserify_process":7}],3:[function(require,module,exports){
+},{"__browserify_process":8}],7:[function(require,module,exports){
+/**
+ * Debounces a function by the given threshold.
+ *
+ * @see http://unscriptable.com/2009/03/20/debouncing-javascript-methods/
+ * @param {Function} function to wrap
+ * @param {Number} timeout in ms (`100`)
+ * @param {Boolean} whether to execute at the beginning (`true`)
+ * @api public
+ */
+
+module.exports = function debounce(func, threshold, execAsap){
+  var timeout;
+  if (false !== execAsap) execAsap = true;
+
+  return function debounced(){
+    var obj = this, args = arguments;
+
+    function delayed () {
+      if (!execAsap) {
+        func.apply(obj, args);
+      }
+      timeout = null;
+    }
+
+    if (timeout) {
+      clearTimeout(timeout);
+    } else if (execAsap) {
+      func.apply(obj, args);
+    }
+
+    timeout = setTimeout(delayed, threshold || 100);
+  };
+};
+
+},{}],10:[function(require,module,exports){
+
+module.exports = Dtree;
+
+function Dtree() {
+  this.size = 0;
+}
+
+Dtree.prototype.insert = function(obj) {
+  this.root = insert(this.root, obj);
+};
+
+Dtree.prototype.contains = function(obj) {
+  return contains(this.root, obj);
+};
+
+Dtree.prototype.toString = function() {
+  return toString(this.root);
+};
+
+Dtree.prototype.neighbors = function(point, radius) {
+  var objects = [];
+  neighbors(this.root, point, radius, false, objects);
+
+  return objects;
+};
+
+function insert(node, obj, isEven) {
+  if(!node) {
+    return { value : obj };
+  }
+
+  var cmp = obj.compare(node.value, isEven);
+  if(cmp < 0) {
+    node.left = insert(node.left, obj, !isEven);
+  } else if (cmp > 0) {
+    node.right = insert(node.right, obj, !isEven);
+  }
+
+  return node;
+}
+
+function contains(node, obj, isEven) {
+  if(!node) 
+    return false;
+
+  var cmp = obj.compare(node.value, isEven);
+  
+  if(cmp < 0)
+    return contains(node.left, obj, !isEven);
+  else if (cmp > 0)
+    return contains(node.right, obj, !isEven);
+
+  return true;
+
+}
+
+function neighbors(node, point, radius, isEven, objects) {
+  if(!node)
+    return;
+
+  if(node.value.position.distance(point) <= radius) {
+    objects.push(node.value);
+  }
+
+  var cmp = point.compare(node.value.position, isEven);
+  var distP2L = distanceToLine(point, node.value.position, isEven);
+
+  if(cmp <= 0 || distP2L <= radius) {
+    neighbors(node.left, point, radius, !isEven, objects);
+  }
+
+  if(cmp >= 0 || distP2L <= radius) {
+    neighbors(node.right, point, radius, !isEven, objects);
+  }
+
+}
+
+function distanceToLine(a, b, horizontal) {
+  return Math.abs(horizontal ? a.y - b.y : a.x - b.x);
+}
+
+function toString(node) {
+  if(!node) {
+    return '';
+  }
+
+  return '{ L:' + toString(node.left) + 
+    ', N:' + node.value + 
+    ', R:' + toString(node.right) + '}';
+}
+
+},{}],4:[function(require,module,exports){
 var EventEmitter = require('events').EventEmitter, 
   inherits = require('inherits'),
-  Vector = require('./vector');
+  Vector = require('./vector'),
+  Dtree = require('./dtree'),
+  Boid = require('./boid');
 
 module.exports = Boids;
 
@@ -430,28 +549,21 @@ function Boids(opts, callback) {
 
   this.speedLimit = opts.speedLimit || 1;
   this.accelerationLimit = opts.accelerationLimit || 0.03;
-  this.separationDistance = opts.separationDistance || 20;
-  this.alignmentDistance = opts.alignmentDistance || 180;
-  this.cohesionDistance = opts.cohesionDistance || 100;
+  this.separationDistance = opts.separationDistance || 30;
+  this.alignmentDistance = opts.alignmentDistance || 60;
+  this.cohesionDistance = opts.cohesionDistance || 60;
   this.separationForce = opts.separationForce || 2;
   this.cohesionForce = opts.cohesionForce || 1;
-  this.alignmentForce = opts.alignmentForce || opts.alignment || 4;
+  this.alignmentForce = opts.alignmentForce || opts.alignment || 1;
   this.attractors = opts.attractors || [];
 
-  var boids = this.boids = [{
-    position: new Vector(20, 0),
-    speed: new Vector(0, 1) 
-  },{
-    position: new Vector(-20, 0),
-    speed: new Vector(0, 1) 
-  }];
+  var boids = this.boids = [];
 
   for (var i = 0, l = opts.boids === undefined ? 150 : opts.boids; i < l; i += 1) {
-    boids[i] = {
-      position: new Vector(Math.random()*25, Math.random()*25),
-      speed: new Vector(0, 0),
-      acceleration: new Vector(0, 0)
-    };
+    boids[i] = new Boid( 
+      new Vector(Math.random()*25, Math.random()*25),
+      new Vector(0, 0)
+    );
   }
 
   this.on('tick', function() {
@@ -460,18 +572,24 @@ function Boids(opts, callback) {
 }
 inherits(Boids, EventEmitter);
 
-Boids.prototype.calcCohesion = function(boid) {
-  var total = new Vector(0, 0);
-  var count = 0;
-  
+Boids.prototype.tree = function() {
+  this.dtree = new Dtree();
   for(var i=0; i<this.boids.length; i++) {
-    var target = this.boids[i];
+    this.dtree.insert(this.boids[i]);
+  }
+};
+
+Boids.prototype.calcCohesion = function(boid) {
+  var total = new Vector(0, 0),
+    neighbors = this.dtree.neighbors(boid.position, this.alignmentDistance),
+    count = 0;
+  
+  for(var i=0; i<neighbors.length; i++) {
+    var target = neighbors[i];
     if(boid === target)
       continue;
 
-    var dist = boid.position.distance(target.position);
-    if(dist < this.cohesionDistance && 
-        isInFrontOf(boid, target.position)) {
+    if(isInFrontOf(boid, target.position)) {
       total = total.add(target.position);
       count++;
     }
@@ -489,23 +607,25 @@ Boids.prototype.calcCohesion = function(boid) {
 };
 
 Boids.prototype.calcSeparation = function(boid) {
-  var total = new Vector(0, 0);
-  var count = 0;
+  var total = new Vector(0, 0),
+    neighbors = this.dtree.neighbors(boid.position, this.separationDistance),
+    count = 0; 
 
-  for(var i=0; i<this.boids.length; i++) {
-    var target = this.boids[i];
+  for(var i=0; i<neighbors.length; i++) {
+    var target = neighbors[i];
     if(boid === target)
       continue;
 
-    var dist = boid.position.distance(target.position);
-    if(dist < this.separationDistance) {
-      total = total.add(
-        boid.position
-          .subtract(target.position)
-          .normalize()
-          .divideBy(dist));
-      count++;
-    }
+    total = total.add(
+      target.position
+        .subtract(boid.position)
+        .normalize()
+        .divideBy(
+          target.position.distance(boid.position)
+        )
+      );
+
+    count++;
   }
 
   if(count === 0) 
@@ -514,23 +634,22 @@ Boids.prototype.calcSeparation = function(boid) {
   return total
     .divideBy(count)
     .normalize()
-    .subtract(boid.speed)
+    .add(boid.speed) // Adding speed instead of subtracting because separation is repulsive
     .limit(this.accelerationLimit);
 };
 
 Boids.prototype.calcAlignment = function(boid) {
-  var total = new Vector(0, 0);
-  var count = 0;
+  var total = new Vector(0, 0),
+    neighbors = this.dtree.neighbors(boid.position, this.alignmentDistance),
+    count = 0;
 
-  for(var i=0; i<this.boids.length; i++) {
-    var target = this.boids[i];
+  for(var i=0; i<neighbors.length; i++) {
+    var target = neighbors[i];
     if(boid === target)
       continue;
 
-    var dist = boid.position.distance(target.position);
-    if(dist < this.alignmentDistance && 
-        isInFrontOf(boid, target.position)) {
-      total = total.add(boid.speed);
+    if(isInFrontOf(boid, target.position)) {
+      total = total.add(target.speed);
       count++;
     }
   }
@@ -548,19 +667,18 @@ Boids.prototype.calcAlignment = function(boid) {
 Boids.prototype.tick = function() {
 
   var boid;
+  this.tree();
+
   for(var i=0; i<this.boids.length; i++) {
     boid = this.boids[i];
-    var cohesion = this
-      .calcCohesion(boid)
-      .multiplyBy(this.cohesionForce);
-    var separation = this
-      .calcSeparation(boid)
-      .multiplyBy(this.separationForce);
-    var alignment = this
-      .calcAlignment(boid)
-      .multiplyBy(this.alignmentForce);
 
-    boid.acceleration = cohesion.add(separation).add(alignment);
+    boid.acceleration = this.calcCohesion(boid)
+      .multiplyBy(this.cohesionForce)
+      .add(this.calcAlignment(boid)
+        .multiplyBy(this.alignmentForce))
+      .subtract(this.calcSeparation(boid)
+        .multiplyBy(this.separationForce));
+
   }
 
   for(var j=0; j<this.boids.length; j++) {
@@ -570,7 +688,7 @@ Boids.prototype.tick = function() {
       .limit(this.speedLimit);
 
     boid.position = boid.position.add(boid.speed);
-    boid.acceleration = new Vector(0, 0);
+    delete boid.acceleration;
   }
 
   this.emit('tick', this.boids);
@@ -578,11 +696,11 @@ Boids.prototype.tick = function() {
 
 function isInFrontOf(boid, point) {
   return boid.position.angle( boid.position.add(boid.speed), point) <= 
-    ( Math.PI / 2);
+    ( Math.PI / 3);
 }
 
 
-},{"events":8,"./vector":1,"inherits":9}],9:[function(require,module,exports){
+},{"events":9,"./vector":1,"./dtree":10,"./boid":2,"inherits":11}],11:[function(require,module,exports){
 module.exports = inherits
 
 function inherits (c, p, proto) {
@@ -613,7 +731,7 @@ function inherits (c, p, proto) {
 //inherits(Child, Parent)
 //new Child
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var EventEmitter = require('events').EventEmitter
   , inherits = require('inherits')
 
@@ -654,7 +772,7 @@ fps.prototype.tick = function() {
 }
 
 
-},{"events":8,"inherits":9}],6:[function(require,module,exports){
+},{"events":9,"inherits":11}],6:[function(require,module,exports){
 var raf = require('raf')
   , EventEmitter = require('events').EventEmitter
 
@@ -683,7 +801,7 @@ function ticker(element, rate, limit) {
   return emitter
 }
 
-},{"events":8,"raf":10}],10:[function(require,module,exports){
+},{"events":9,"raf":12}],12:[function(require,module,exports){
 (function(){module.exports = raf
 
 var EE = require('events').EventEmitter
@@ -733,5 +851,5 @@ raf.now = now
 
 
 })()
-},{"events":8}]},{},[2])
+},{"events":9}]},{},[3])
 ;
