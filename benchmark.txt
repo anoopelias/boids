@@ -11,3 +11,10 @@
 500 boids: 43 ticks/sec
 550 boids: 36 ticks/sec
 
+-- recursive kdtree optimization
+(Warmup of 10000)
+50 boids: 2230 ticks/sec
+100 boids: 929 ticks/sec
+150 boids: 618 ticks/sec
+200 boids: 435 ticks/sec
+250 boids: 343 ticks/sec
