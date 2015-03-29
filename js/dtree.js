@@ -18,7 +18,10 @@ Dtree.prototype.toString = function() {
 };
 
 Dtree.prototype.neighbors = function(point, radius) {
-  return neighbors(this.root, point, radius);
+  var objects = [];
+  neighbors(this.root, point, radius, false, objects);
+
+  return objects;
 };
 
 function insert(node, obj, isEven) {
@@ -51,30 +54,24 @@ function contains(node, obj, isEven) {
 
 }
 
-function neighbors(node, point, radius, isEven) {
-  var neighborPoints = [],
-    leftPoints = [],
-    rightPoints = [];
-
+function neighbors(node, point, radius, isEven, objects) {
   if(!node)
-    return neighborPoints;
+    return;
 
   if(node.value.position.distance(point) <= radius) {
-    neighborPoints.push(node.value);
+    objects.push(node.value);
   }
 
   var cmp = point.compare(node.value.position, isEven);
   var distP2L = distanceToLine(point, node.value.position, isEven);
 
   if(cmp <= 0 || distP2L <= radius) {
-    leftPoints = neighbors(node.left, point, radius, !isEven);
+    neighbors(node.left, point, radius, !isEven, objects);
   }
 
   if(cmp >= 0 || distP2L <= radius) {
-    rightPoints = neighbors(node.right, point, radius, !isEven);
+    neighbors(node.right, point, radius, !isEven, objects);
   }
-
-  return neighborPoints.concat(leftPoints).concat(rightPoints);
 
 }
 

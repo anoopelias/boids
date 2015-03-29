@@ -100,7 +100,8 @@ describe("Dtree", function() {
     var objects = [], 
       dtree = new Dtree(),
       radius = 60,
-      n = 5;
+      n = 5000;
+
     for(var i=0; i<n; i++) {
       var v = new Obj(Math.random() * 500 - 250, Math.random() * 500 - 250);
       objects.push(v);
