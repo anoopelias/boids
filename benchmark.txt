@@ -18,3 +18,21 @@
 150 boids: 618 ticks/sec
 200 boids: 435 ticks/sec
 250 boids: 343 ticks/sec
+
+-- non-recursive kdtree neighbor search
+50 boids: 2999 ticks/sec
+100 boids: 1208 ticks/sec
+150 boids: 876 ticks/sec
+200 boids: 625 ticks/sec
+250 boids: 451 ticks/sec
+300 boids: 304 ticks/sec
+
+-- Measuring squared distnace optimization
+50 boids: 3160 ticks/sec
+100 boids: 1324 ticks/sec
+150 boids: 895 ticks/sec
+200 boids: 658 ticks/sec
+250 boids: 497 ticks/sec
+300 boids: 388 ticks/sec
+
+

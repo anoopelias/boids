@@ -6,7 +6,7 @@ function Dtree() {
 }
 
 Dtree.prototype.insert = function(obj) {
-  this.root = insert(this.root, obj);
+  this.root = insert(this.root, obj, false);
 };
 
 Dtree.prototype.contains = function(obj) {
@@ -18,15 +18,37 @@ Dtree.prototype.toString = function() {
 };
 
 Dtree.prototype.neighbors = function(point, radius) {
-  var objects = [];
-  neighbors(this.root, point, radius, false, objects);
+  var objects = [],
+    stack = [this.root],
+    radiusSq = radius * radius,
+    node,
+    position;
+
+  // Not speeding up enough with recursion
+  while(stack.length > 0) {
+    node = stack.pop();
+    position = node.value.position;
+
+    if(position.distSquared(point) <= radiusSq) 
+      objects.push(node.value);
+
+    var cmp = point.compare(position, node.isEven);
+    var distP2L = distanceToLine(point, position, node.isEven);
+
+    if(node.left && (cmp <= 0 || distP2L <= radius))
+      stack.push(node.left);
+
+    if(node.right && (cmp >= 0 || distP2L <= radius))
+      stack.push(node.right);
+
+  }
 
   return objects;
 };
 
 function insert(node, obj, isEven) {
   if(!node) {
-    return { value : obj };
+    return { value : obj, isEven: isEven };
   }
 
   var cmp = obj.compare(node.value, isEven);
@@ -51,27 +73,6 @@ function contains(node, obj, isEven) {
     return contains(node.right, obj, !isEven);
 
   return true;
-
-}
-
-function neighbors(node, point, radius, isEven, objects) {
-  if(!node)
-    return;
-
-  if(node.value.position.distance(point) <= radius) {
-    objects.push(node.value);
-  }
-
-  var cmp = point.compare(node.value.position, isEven);
-  var distP2L = distanceToLine(point, node.value.position, isEven);
-
-  if(cmp <= 0 || distP2L <= radius) {
-    neighbors(node.left, point, radius, !isEven, objects);
-  }
-
-  if(cmp >= 0 || distP2L <= radius) {
-    neighbors(node.right, point, radius, !isEven, objects);
-  }
 
 }
 
