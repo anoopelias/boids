@@ -35,4 +35,13 @@
 250 boids: 497 ticks/sec
 300 boids: 388 ticks/sec
 
+-- Reducing overheads in neighbor search
+50 boids: 3924 ticks/sec
+100 boids: 1721 ticks/sec
+150 boids: 1023 ticks/sec
+200 boids: 699 ticks/sec
+250 boids: 591 ticks/sec
+300 boids: 461 ticks/sec
+350 boids: 353 ticks/sec
+400 boids: 316 ticks/sec
 

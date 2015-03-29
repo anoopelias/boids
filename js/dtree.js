@@ -1,4 +1,3 @@
-
 module.exports = Dtree;
 
 function Dtree() {
@@ -21,24 +20,33 @@ Dtree.prototype.neighbors = function(point, radius) {
   var objects = [],
     stack = [this.root],
     radiusSq = radius * radius,
+    distSq,
+    distX, distY,
     node,
-    position;
+    cmp,
+    position,
+    dist2line;
 
   // Not speeding up enough with recursion
   while(stack.length > 0) {
     node = stack.pop();
     position = node.value.position;
+    isEven = node.isEven;
 
-    if(position.distSquared(point) <= radiusSq) 
+    distX = point.x - position.x;
+    distY = point.y - position.y;
+    distSq = distX * distX + distY * distY;
+
+    if(distSq <= radiusSq) 
       objects.push(node.value);
 
-    var cmp = point.compare(position, node.isEven);
-    var distP2L = distanceToLine(point, position, node.isEven);
+    cmp = (isEven ? (distY || distX) : (distX || distY));
+    dist2line = Math.abs(isEven ? distY : distX);
 
-    if(node.left && (cmp <= 0 || distP2L <= radius))
+    if(node.left && (cmp <= 0 || dist2line <= radius))
       stack.push(node.left);
 
-    if(node.right && (cmp >= 0 || distP2L <= radius))
+    if(node.right && (cmp >= 0 || dist2line <= radius))
       stack.push(node.right);
 
   }
@@ -74,10 +82,6 @@ function contains(node, obj, isEven) {
 
   return true;
 
-}
-
-function distanceToLine(a, b, horizontal) {
-  return Math.abs(horizontal ? a.y - b.y : a.x - b.x);
 }
 
 function toString(node) {
