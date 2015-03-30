@@ -105,9 +105,9 @@ Boids.prototype.calcSeparation = function(boid) {
             target.position.distance(boid.position)
           )
         );
+      count++;
     }
 
-    count++;
   }
 
   if(count === 0) 
