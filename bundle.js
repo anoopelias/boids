@@ -116,14 +116,6 @@ canvas.addEventListener('click', function(e) {
     );
 });
 
-document.body.onmousemove = function(e) {
-  var halfHeight = canvas.height/2,
-    halfWidth = canvas.width/2;
-
-  attractors[0].x = e.x - halfWidth;
-  attractors[0].y = e.y - halfHeight;
-};
-
 window.onresize = debounce(function() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -171,7 +163,7 @@ var frames = fps({ every: 10, decay: 0.04 }).on('data', function(rate) {
   countText.innerHTML = String(boids.boids.length);
 });
 
-},{"./vector":1,"./boid":2,"./":4,"ticker":5,"fps":6,"debounce":7}],8:[function(require,module,exports){
+},{"./vector":1,"./boid":2,"./":4,"fps":5,"ticker":6,"debounce":7}],8:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -573,7 +565,6 @@ function Boids(opts, callback) {
   this.separationForce = opts.separationForce || 2;
   this.cohesionForce = opts.cohesionForce || 1;
   this.alignmentForce = opts.alignmentForce || opts.alignment || 1;
-  this.attractors = opts.attractors || [];
   this.maxDistSq = Math.max(this.separationDistanceSq, 
       this.cohesionDistanceSq, this.alignmentDistanceSq);
 
@@ -774,35 +765,6 @@ function inherits (c, p, proto) {
 //new Child
 
 },{}],5:[function(require,module,exports){
-var raf = require('raf')
-  , EventEmitter = require('events').EventEmitter
-
-module.exports = ticker
-
-function ticker(element, rate, limit) {
-  var millisecondsPerFrame = 1000 / (rate || 60)
-    , time = 0
-    , emitter
-
-  limit = arguments.length > 2 ? +limit + 1 : 2
-  emitter = raf(element || window).on('data', function(dt) {
-    var n = limit
-
-    time += dt
-    while (time > millisecondsPerFrame && n) {
-      time -= millisecondsPerFrame
-      n -= 1
-      emitter.emit('tick')
-    }
-    time = (time + millisecondsPerFrame * 1000) % millisecondsPerFrame
-
-    if (n !== limit) emitter.emit('draw')
-  })
-
-  return emitter
-}
-
-},{"events":9,"raf":12}],6:[function(require,module,exports){
 var EventEmitter = require('events').EventEmitter
   , inherits = require('inherits')
 
@@ -843,7 +805,36 @@ fps.prototype.tick = function() {
 }
 
 
-},{"events":9,"inherits":11}],12:[function(require,module,exports){
+},{"events":9,"inherits":11}],6:[function(require,module,exports){
+var raf = require('raf')
+  , EventEmitter = require('events').EventEmitter
+
+module.exports = ticker
+
+function ticker(element, rate, limit) {
+  var millisecondsPerFrame = 1000 / (rate || 60)
+    , time = 0
+    , emitter
+
+  limit = arguments.length > 2 ? +limit + 1 : 2
+  emitter = raf(element || window).on('data', function(dt) {
+    var n = limit
+
+    time += dt
+    while (time > millisecondsPerFrame && n) {
+      time -= millisecondsPerFrame
+      n -= 1
+      emitter.emit('tick')
+    }
+    time = (time + millisecondsPerFrame * 1000) % millisecondsPerFrame
+
+    if (n !== limit) emitter.emit('draw')
+  })
+
+  return emitter
+}
+
+},{"events":9,"raf":12}],12:[function(require,module,exports){
 (function(){module.exports = raf
 
 var EE = require('events').EventEmitter
