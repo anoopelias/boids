@@ -25,8 +25,8 @@ function Boids(opts, callback) {
   this.cohesionForce = opts.cohesionForce || 1;
   this.alignmentForce = opts.alignmentForce || opts.alignment || 1;
   this.attractors = opts.attractors || [];
-  this.maxDist = Math.max(this.separationDistance, 
-      this.cohesionDistance, this.alignmentDistance);
+  this.maxDistSq = Math.max(this.separationDistanceSq, 
+      this.cohesionDistanceSq, this.alignmentDistanceSq);
 
   var boids = this.boids = [];
 
@@ -54,7 +54,7 @@ Boids.prototype.init = function() {
 };
 
 Boids.prototype.findNeighbors = function(point) {
-  this.tickData.neighbors = this.tickData.dtree.neighbors(point, this.maxDist);
+  this.tickData.neighbors = this.tickData.dtree.neighbors(point, this.maxDistSq);
 };
 
 Boids.prototype.calcCohesion = function(boid) {

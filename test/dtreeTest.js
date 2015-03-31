@@ -69,7 +69,7 @@ describe("Dtree", function() {
     dtree.insert(objM10);
     dtree.insert(obj1010);
 
-    var neighbors = dtree.neighbors(new Vector(3, 3), 5); 
+    var neighbors = dtree.neighbors(new Vector(3, 3), 25); 
     assert(arrayContains(neighbors, obj67));
     assert(arrayContains(neighbors, objM10));
     assert(!arrayContains(neighbors, obj1010));
@@ -89,7 +89,7 @@ describe("Dtree", function() {
     dtree.insert(obj1010);
     dtree.insert(obj33);
 
-    var neighbors = dtree.neighbors(new Vector(3, 3), 2); 
+    var neighbors = dtree.neighbors(new Vector(3, 3), 4); 
     assert(arrayContains(neighbors, obj33));
     assert(!arrayContains(neighbors, obj67));
     assert(!arrayContains(neighbors, objM10));
@@ -112,7 +112,7 @@ describe("Dtree", function() {
       var obj = objects[j],
         bruteNeighbors = [];
 
-      var treeNeighbors = dtree.neighbors(obj.position, radius);
+      var treeNeighbors = dtree.neighbors(obj.position, radius * radius);
 
       for(var k=0; k<objects.length; k++) {
         var other = objects[k];

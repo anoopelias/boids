@@ -16,10 +16,9 @@ Dtree.prototype.toString = function() {
   return toString(this.root);
 };
 
-Dtree.prototype.neighbors = function(point, radius) {
+Dtree.prototype.neighbors = function(point, radiusSq) {
   var objects = [],
     stack = [this.root],
-    radiusSq = radius * radius,
     distSq,
     distX, distY,
     node,
@@ -44,12 +43,12 @@ Dtree.prototype.neighbors = function(point, radius) {
       });
 
     cmp = (isEven ? (distY || distX) : (distX || distY));
-    dist2line = Math.abs(isEven ? distY : distX);
+    dist2line = Math.pow(isEven ? distY : distX, 2);
 
-    if(node.left && (cmp <= 0 || dist2line <= radius))
+    if(node.left && (cmp <= 0 || dist2line <= radiusSq))
       stack.push(node.left);
 
-    if(node.right && (cmp >= 0 || dist2line <= radius))
+    if(node.right && (cmp >= 0 || dist2line <= radiusSq))
       stack.push(node.right);
 
   }
