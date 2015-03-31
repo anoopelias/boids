@@ -5,18 +5,24 @@ var fps = require('fps'),
   Vector = require('./vector'),
   Boid = require('./boid');
 
-var attractors = [{
-    x: Infinity,
-    y: Infinity,
-    dist: 150,
-    speed: 0.25
-}];
 
-var canvas = document.createElement('canvas'),
+var anchor = document.createElement('a'),
+  canvas = document.createElement('canvas'),
   ctx = canvas.getContext('2d'),
-  boids = Boids({
-    attractors: attractors
-  });
+  boids = Boids();
+
+canvas.addEventListener('click', function(e) {
+  var x = e.pageX,
+    y = e.pageY,
+    halfHeight = canvas.height/2,
+    halfWidth = canvas.width/2;
+  x = x - halfWidth;
+  y = y - halfHeight;
+  if (boids.boids.length < 500) 
+    boids.boids.push(
+      new Boid(new Vector(x, y), new Vector(Math.random()*6-3,Math.random()*6-3))
+    );
+});
 
 document.body.onmousemove = function(e) {
   var halfHeight = canvas.height/2,
@@ -32,9 +38,11 @@ window.onresize = debounce(function() {
 }, 100);
 window.onresize();
 
+anchor.setAttribute('href', '#');
+anchor.appendChild(canvas);
 document.body.style.margin = '0';
 document.body.style.padding = '0';
-document.body.appendChild(canvas);
+document.body.appendChild(anchor);
 
 ticker(window, 60).on('tick', function() {
   frames.tick();
@@ -62,7 +70,7 @@ var countText = document.querySelector('[data-count]');
 var frames = fps({ every: 10, decay: 0.04 }).on('data', function(rate) {
   for (var i = 0; i < 3; i += 1) {
     if (rate <= 56 && boids.boids.length > 10) boids.boids.pop();
-    if (rate >= 60 && boids.boids.length < 500) 
+    if (rate >= 60 && boids.boids.length < 300) 
       boids.boids.push(
         new Boid(new Vector(0,0), new Vector(Math.random()*6-3,Math.random()*6-3))
       );
