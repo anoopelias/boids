@@ -41,6 +41,11 @@
             margin-bottom:0.5em;
             font-size:14px;
           }
+          @media screen and (max-width: 640px) {
+            body {
+              font-size: 12px;
+            }
+          }
         </style>
     </head>
     <body>
@@ -66,10 +71,13 @@
           </p>
           <p>
             Right now you're watching <strong data-count>many</strong> boids being
-            simulated at <strong data-fps>60</strong> frames per second.
+            simulated at <strong data-fps>60</strong> fps.
           </p>
           <p class="source">
             <a href="http://github.com/anoopelias/boids">Source on GitHub</a>
+          </p>
+          <p class="source">
+            Fork of <a href="http://hughsk.io/boids/">hughsk/boids</a>
           </p>
         </div>
       </article>
