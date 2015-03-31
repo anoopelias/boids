@@ -1,22 +1,5 @@
 ;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
 
-module.exports = Boid;
-
-function Boid(position, speed) {
-  this.position = position;
-  this.speed = speed;
-}
-
-Boid.prototype.compare = function(that, isEven) {
-  return this.position.compare(that.position, isEven);
-};
-
-Boid.prototype.toString = function() {
-  return this.position.toString();
-};
-
-},{}],2:[function(require,module,exports){
-
 function Vector(x, y) {
   this.x = x;
   this.y = y;
@@ -88,6 +71,23 @@ Vector.prototype.toString = function() {
 };
 
 module.exports = Vector;
+
+},{}],2:[function(require,module,exports){
+
+module.exports = Boid;
+
+function Boid(position, speed) {
+  this.position = position;
+  this.speed = speed;
+}
+
+Boid.prototype.compare = function(that, isEven) {
+  return this.position.compare(that.position, isEven);
+};
+
+Boid.prototype.toString = function() {
+  return this.position.toString();
+};
 
 },{}],3:[function(require,module,exports){
 var fps = require('fps'),
@@ -171,7 +171,7 @@ var frames = fps({ every: 10, decay: 0.04 }).on('data', function(rate) {
   countText.innerHTML = String(boids.boids.length);
 });
 
-},{"./vector":2,"./boid":1,"./":4,"fps":5,"ticker":6,"debounce":7}],8:[function(require,module,exports){
+},{"./vector":1,"./boid":2,"./":4,"ticker":5,"fps":6,"debounce":7}],8:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -466,10 +466,9 @@ Dtree.prototype.toString = function() {
   return toString(this.root);
 };
 
-Dtree.prototype.neighbors = function(point, radius) {
+Dtree.prototype.neighbors = function(point, radiusSq) {
   var objects = [],
     stack = [this.root],
-    radiusSq = radius * radius,
     distSq,
     distX, distY,
     node,
@@ -494,12 +493,12 @@ Dtree.prototype.neighbors = function(point, radius) {
       });
 
     cmp = (isEven ? (distY || distX) : (distX || distY));
-    dist2line = Math.abs(isEven ? distY : distX);
+    dist2line = Math.pow(isEven ? distY : distX, 2);
 
-    if(node.left && (cmp <= 0 || dist2line <= radius))
+    if(node.left && (cmp <= 0 || dist2line <= radiusSq))
       stack.push(node.left);
 
-    if(node.right && (cmp >= 0 || dist2line <= radius))
+    if(node.right && (cmp >= 0 || dist2line <= radiusSq))
       stack.push(node.right);
 
   }
@@ -575,8 +574,8 @@ function Boids(opts, callback) {
   this.cohesionForce = opts.cohesionForce || 1;
   this.alignmentForce = opts.alignmentForce || opts.alignment || 1;
   this.attractors = opts.attractors || [];
-  this.maxDist = Math.max(this.separationDistance, 
-      this.cohesionDistance, this.alignmentDistance);
+  this.maxDistSq = Math.max(this.separationDistanceSq, 
+      this.cohesionDistanceSq, this.alignmentDistanceSq);
 
   var boids = this.boids = [];
 
@@ -594,28 +593,32 @@ function Boids(opts, callback) {
 inherits(Boids, EventEmitter);
 
 Boids.prototype.init = function() {
-  this.dtree = new Dtree();
+  var dtree = new Dtree();
   for(var i=0; i<this.boids.length; i++) {
-    this.dtree.insert(this.boids[i]);
+    dtree.insert(this.boids[i]);
   }
+
+  this.tickData = {};
+  this.tickData.dtree = dtree;
 };
 
 Boids.prototype.findNeighbors = function(point) {
-  this.neighbors = this.dtree.neighbors(point, this.maxDist);
+  this.tickData.neighbors = this.tickData.dtree.neighbors(point, this.maxDistSq);
 };
 
 Boids.prototype.calcCohesion = function(boid) {
   var total = new Vector(0, 0),
     distSq,
     target,
+    neighbors = this.tickData.neighbors,
     count = 0;
   
-  for(var i=0; i<this.neighbors.length; i++) {
-    target = this.neighbors[i].neighbor;
+  for(var i=0; i<neighbors.length; i++) {
+    target = neighbors[i].neighbor;
     if(boid === target)
       continue;
 
-    distSq = this.neighbors[i].distSq;
+    distSq = neighbors[i].distSq;
     if(distSq < this.cohesionDistanceSq &&
         isInFrontOf(boid, target.position)) {
       total = total.add(target.position);
@@ -638,14 +641,15 @@ Boids.prototype.calcSeparation = function(boid) {
   var total = new Vector(0, 0),
     target,
     distSq,
+    neighbors = this.tickData.neighbors,
     count = 0; 
 
-  for(var i=0; i<this.neighbors.length; i++) {
-    target = this.neighbors[i].neighbor;
+  for(var i=0; i<neighbors.length; i++) {
+    target = neighbors[i].neighbor;
     if(boid === target)
       continue;
 
-    distSq = this.neighbors[i].distSq;
+    distSq = neighbors[i].distSq;
     if(distSq < this.separationDistanceSq) {
       total = total.add(
         target.position
@@ -674,14 +678,15 @@ Boids.prototype.calcAlignment = function(boid) {
   var total = new Vector(0, 0),
     target,
     distSq,
+    neighbors = this.tickData.neighbors,
     count = 0;
 
-  for(var i=0; i<this.neighbors.length; i++) {
-    target = this.neighbors[i].neighbor;
+  for(var i=0; i<neighbors.length; i++) {
+    target = this.tickData.neighbors[i].neighbor;
     if(boid === target)
       continue;
 
-    distSq = this.neighbors[i].distSq;
+    distSq = neighbors[i].distSq;
     if(distSq < this.alignmentDistanceSq && 
         isInFrontOf(boid, target.position)) {
       total = total.add(target.speed);
@@ -716,6 +721,8 @@ Boids.prototype.tick = function() {
         .multiplyBy(this.separationForce));
   }
 
+  delete this.tickData;
+
   for(var j=0; j<this.boids.length; j++) {
     boid = this.boids[j];
     boid.speed = boid.speed
@@ -735,7 +742,7 @@ function isInFrontOf(boid, point) {
 }
 
 
-},{"events":9,"./vector":2,"./dtree":10,"./boid":1,"inherits":11}],11:[function(require,module,exports){
+},{"events":9,"./vector":1,"./dtree":10,"./boid":2,"inherits":11}],11:[function(require,module,exports){
 module.exports = inherits
 
 function inherits (c, p, proto) {
@@ -767,6 +774,35 @@ function inherits (c, p, proto) {
 //new Child
 
 },{}],5:[function(require,module,exports){
+var raf = require('raf')
+  , EventEmitter = require('events').EventEmitter
+
+module.exports = ticker
+
+function ticker(element, rate, limit) {
+  var millisecondsPerFrame = 1000 / (rate || 60)
+    , time = 0
+    , emitter
+
+  limit = arguments.length > 2 ? +limit + 1 : 2
+  emitter = raf(element || window).on('data', function(dt) {
+    var n = limit
+
+    time += dt
+    while (time > millisecondsPerFrame && n) {
+      time -= millisecondsPerFrame
+      n -= 1
+      emitter.emit('tick')
+    }
+    time = (time + millisecondsPerFrame * 1000) % millisecondsPerFrame
+
+    if (n !== limit) emitter.emit('draw')
+  })
+
+  return emitter
+}
+
+},{"events":9,"raf":12}],6:[function(require,module,exports){
 var EventEmitter = require('events').EventEmitter
   , inherits = require('inherits')
 
@@ -807,36 +843,7 @@ fps.prototype.tick = function() {
 }
 
 
-},{"events":9,"inherits":11}],6:[function(require,module,exports){
-var raf = require('raf')
-  , EventEmitter = require('events').EventEmitter
-
-module.exports = ticker
-
-function ticker(element, rate, limit) {
-  var millisecondsPerFrame = 1000 / (rate || 60)
-    , time = 0
-    , emitter
-
-  limit = arguments.length > 2 ? +limit + 1 : 2
-  emitter = raf(element || window).on('data', function(dt) {
-    var n = limit
-
-    time += dt
-    while (time > millisecondsPerFrame && n) {
-      time -= millisecondsPerFrame
-      n -= 1
-      emitter.emit('tick')
-    }
-    time = (time + millisecondsPerFrame * 1000) % millisecondsPerFrame
-
-    if (n !== limit) emitter.emit('draw')
-  })
-
-  return emitter
-}
-
-},{"events":9,"raf":12}],12:[function(require,module,exports){
+},{"events":9,"inherits":11}],12:[function(require,module,exports){
 (function(){module.exports = raf
 
 var EE = require('events').EventEmitter
