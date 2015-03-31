@@ -44,28 +44,32 @@ function Boids(opts, callback) {
 inherits(Boids, EventEmitter);
 
 Boids.prototype.init = function() {
-  this.dtree = new Dtree();
+  var dtree = new Dtree();
   for(var i=0; i<this.boids.length; i++) {
-    this.dtree.insert(this.boids[i]);
+    dtree.insert(this.boids[i]);
   }
+
+  this.tickData = {};
+  this.tickData.dtree = dtree;
 };
 
 Boids.prototype.findNeighbors = function(point) {
-  this.neighbors = this.dtree.neighbors(point, this.maxDist);
+  this.tickData.neighbors = this.tickData.dtree.neighbors(point, this.maxDist);
 };
 
 Boids.prototype.calcCohesion = function(boid) {
   var total = new Vector(0, 0),
     distSq,
     target,
+    neighbors = this.tickData.neighbors,
     count = 0;
   
-  for(var i=0; i<this.neighbors.length; i++) {
-    target = this.neighbors[i].neighbor;
+  for(var i=0; i<neighbors.length; i++) {
+    target = neighbors[i].neighbor;
     if(boid === target)
       continue;
 
-    distSq = this.neighbors[i].distSq;
+    distSq = neighbors[i].distSq;
     if(distSq < this.cohesionDistanceSq &&
         isInFrontOf(boid, target.position)) {
       total = total.add(target.position);
@@ -88,14 +92,15 @@ Boids.prototype.calcSeparation = function(boid) {
   var total = new Vector(0, 0),
     target,
     distSq,
+    neighbors = this.tickData.neighbors,
     count = 0; 
 
-  for(var i=0; i<this.neighbors.length; i++) {
-    target = this.neighbors[i].neighbor;
+  for(var i=0; i<neighbors.length; i++) {
+    target = neighbors[i].neighbor;
     if(boid === target)
       continue;
 
-    distSq = this.neighbors[i].distSq;
+    distSq = neighbors[i].distSq;
     if(distSq < this.separationDistanceSq) {
       total = total.add(
         target.position
@@ -124,14 +129,15 @@ Boids.prototype.calcAlignment = function(boid) {
   var total = new Vector(0, 0),
     target,
     distSq,
+    neighbors = this.tickData.neighbors,
     count = 0;
 
-  for(var i=0; i<this.neighbors.length; i++) {
-    target = this.neighbors[i].neighbor;
+  for(var i=0; i<neighbors.length; i++) {
+    target = this.tickData.neighbors[i].neighbor;
     if(boid === target)
       continue;
 
-    distSq = this.neighbors[i].distSq;
+    distSq = neighbors[i].distSq;
     if(distSq < this.alignmentDistanceSq && 
         isInFrontOf(boid, target.position)) {
       total = total.add(target.speed);
@@ -165,6 +171,8 @@ Boids.prototype.tick = function() {
       .subtract(this.calcSeparation(boid)
         .multiplyBy(this.separationForce));
   }
+
+  delete this.tickData;
 
   for(var j=0; j<this.boids.length; j++) {
     boid = this.boids[j];
