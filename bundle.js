@@ -1,22 +1,5 @@
 ;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
 
-module.exports = Boid;
-
-function Boid(position, speed) {
-  this.position = position;
-  this.speed = speed;
-}
-
-Boid.prototype.compare = function(that, isEven) {
-  return this.position.compare(that.position, isEven);
-};
-
-Boid.prototype.toString = function() {
-  return this.position.toString();
-};
-
-},{}],2:[function(require,module,exports){
-
 function Vector(x, y) {
   this.x = x;
   this.y = y;
@@ -88,6 +71,23 @@ Vector.prototype.toString = function() {
 };
 
 module.exports = Vector;
+
+},{}],2:[function(require,module,exports){
+
+module.exports = Boid;
+
+function Boid(position, speed) {
+  this.position = position;
+  this.speed = speed;
+}
+
+Boid.prototype.compare = function(that, isEven) {
+  return this.position.compare(that.position, isEven);
+};
+
+Boid.prototype.toString = function() {
+  return this.position.toString();
+};
 
 },{}],3:[function(require,module,exports){
 var fps = require('fps'),
@@ -163,7 +163,7 @@ var frames = fps({ every: 10, decay: 0.04 }).on('data', function(rate) {
   countText.innerHTML = String(boids.boids.length);
 });
 
-},{"./vector":2,"./boid":1,"./":4,"fps":5,"ticker":6,"debounce":7}],8:[function(require,module,exports){
+},{"./vector":1,"./boid":2,"./":4,"fps":5,"ticker":6,"debounce":7}],8:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -574,7 +574,7 @@ function Boids(opts, callback) {
 
   for (var i = 0, l = opts.boids === undefined ? 150 : opts.boids; i < l; i += 1) {
     boids[i] = new Boid( 
-      new Vector(Math.random()*25, Math.random()*25),
+      new Vector(Math.random()*100 - 50, Math.random()*100 - 50),
       new Vector(0, 0)
     );
   }
@@ -727,7 +727,7 @@ function isInFrontOf(boid, point) {
 }
 
 
-},{"events":9,"./vector":2,"./dtree":10,"./boid":1,"inherits":11}],11:[function(require,module,exports){
+},{"events":9,"./vector":1,"./dtree":10,"./boid":2,"inherits":11}],11:[function(require,module,exports){
 module.exports = inherits
 
 function inherits (c, p, proto) {
