@@ -20,6 +20,7 @@
 250 boids: 343 ticks/sec
 
 -- non-recursive kdtree neighbor search
+(Warmup of 10000)
 50 boids: 2999 ticks/sec
 100 boids: 1208 ticks/sec
 150 boids: 876 ticks/sec
@@ -28,6 +29,7 @@
 300 boids: 304 ticks/sec
 
 -- Measuring squared distnace optimization
+(Warmup of 10000)
 50 boids: 3160 ticks/sec
 100 boids: 1324 ticks/sec
 150 boids: 895 ticks/sec
@@ -36,6 +38,7 @@
 300 boids: 388 ticks/sec
 
 -- Reducing overheads in neighbor search
+(Warmup of 10000)
 50 boids: 3924 ticks/sec
 100 boids: 1721 ticks/sec
 150 boids: 1023 ticks/sec
@@ -46,6 +49,7 @@
 400 boids: 316 ticks/sec
 
 -- Single neigbour search per tick / boid
+(Warmup of 10000)
 50 boids: 3170 ticks/sec
 100 boids: 2264 ticks/sec
 150 boids: 1387 ticks/sec
