@@ -24,7 +24,6 @@ function Boids(opts, callback) {
   this.separationForce = opts.separationForce || 2;
   this.cohesionForce = opts.cohesionForce || 1;
   this.alignmentForce = opts.alignmentForce || opts.alignment || 1;
-  this.attractors = opts.attractors || [];
   this.maxDistSq = Math.max(this.separationDistanceSq, 
       this.cohesionDistanceSq, this.alignmentDistanceSq);
 

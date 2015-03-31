@@ -24,14 +24,6 @@ canvas.addEventListener('click', function(e) {
     );
 });
 
-document.body.onmousemove = function(e) {
-  var halfHeight = canvas.height/2,
-    halfWidth = canvas.width/2;
-
-  attractors[0].x = e.x - halfWidth;
-  attractors[0].y = e.y - halfHeight;
-};
-
 window.onresize = debounce(function() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
