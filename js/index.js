@@ -32,7 +32,7 @@ function Boids(opts, callback) {
 
   for (var i = 0, l = opts.boids === undefined ? 150 : opts.boids; i < l; i += 1) {
     boids[i] = new Boid( 
-      new Vector(Math.random()*25, Math.random()*25),
+      new Vector(Math.random()*100 - 50, Math.random()*100 - 50),
       new Vector(0, 0)
     );
   }
