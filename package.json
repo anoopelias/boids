@@ -11,6 +11,9 @@
     "debounce": "0.0.2",
     "fps": "0.0.3",
     "jshint": "^2.6.3",
+    "karma": "^0.12.31",
+    "karma-browserify": "^4.1.2",
+    "karma-mocha": "^0.1.10",
     "mocha": "^2.2.1",
     "raf": "0.0.2",
     "ticker": "0.0.1"
