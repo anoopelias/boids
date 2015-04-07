@@ -55,10 +55,13 @@ Vector.prototype.limit = function(s) {
 };
 
 Vector.prototype.angle = function(p1, p2) {
-  var v1 = this.subtract(p1).normalize();
-  var v2 = this.subtract(p2).normalize();
+  var v1 = this.subtract(p1).normalize(),
+    v2 = this.subtract(p2).normalize(),
+    // Rounding is because sometimes the value goes beyond 1.0 
+    // due to floating point precision errors
+    cos = Math.round((v1.x * v2.x + v1.y * v2.y) * 10000) / 10000;
 
-  return Math.acos(v1.x * v2.x + v1.y * v2.y);
+  return Math.acos(cos);
 };
 
 Vector.prototype.compare = function(that, y) {
@@ -163,7 +166,7 @@ var frames = fps({ every: 10, decay: 0.04 }).on('data', function(rate) {
   countText.innerHTML = String(boids.boids.length);
 });
 
-},{"./vector":1,"./boid":2,"./":4,"fps":5,"ticker":6,"debounce":7}],8:[function(require,module,exports){
+},{"./vector":1,"./boid":2,"./":4,"ticker":5,"fps":6,"debounce":7}],8:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -764,7 +767,7 @@ function inherits (c, p, proto) {
 //inherits(Child, Parent)
 //new Child
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var EventEmitter = require('events').EventEmitter
   , inherits = require('inherits')
 
@@ -805,7 +808,7 @@ fps.prototype.tick = function() {
 }
 
 
-},{"events":9,"inherits":11}],6:[function(require,module,exports){
+},{"events":9,"inherits":11}],5:[function(require,module,exports){
 var raf = require('raf')
   , EventEmitter = require('events').EventEmitter
 
