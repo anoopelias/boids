@@ -133,19 +133,19 @@ describe('Boid', function() {
     assertBoid(boid4, [-10.0424, -10.0424, -0.0424, -0.0424]);
 
     boids.tick();
-    assertBoid(boid1, [0.8303, 0.8303, 0.3939, 0.3939]);
+    assertBoid(boid1, [0.8939, 0.8939, 0.4576, 0.4576]);
     assertBoid(boid2, [10.1273, 10.1273, 0.0849, 0.0849]);
     assertBoid(boid3, [60, 60, 0, 0]);
     assertBoid(boid4, [-10.1273, -10.1273, -0.0849, -0.0849]);
 
     boids.tick();
-    assertBoid(boid1, [1.2454, 1.2454, 0.4151, 0.4151]);
+    assertBoid(boid1, [1.3727, 1.3727, 0.4788, 0.4788]);
     assertBoid(boid2, [10.2546, 10.2546, 0.1273, 0.1273]);
     assertBoid(boid3, [60, 60, 0, 0]);
     assertBoid(boid4, [-10.2546, -10.2546, -0.1273, -0.1273]);
 
     boids.tick();
-    assertBoid(boid1, [1.6182, 1.6182, 0.3727, 0.3727]);
+    assertBoid(boid1, [1.8727, 1.8727, 0.5000, 0.5000]);
     assertBoid(boid2, [10.4243, 10.4243, 0.1697, 0.1697]);
     assertBoid(boid3, [60, 60, 0, 0]);
     assertBoid(boid4, [-10.4243, -10.4243, -0.1697, -0.1697]);
