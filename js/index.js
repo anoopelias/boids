@@ -54,7 +54,35 @@ Boids.prototype.init = function() {
 
 Boids.prototype.findNeighbors = function(point) {
   this.tickData.neighbors = this.tickData.dtree.neighbors(point, this.maxDistSq);
+  //this.tickData.neighbors = this.findNeighborsBrute(point);
 };
+
+Boids.prototype.findNeighborsBrute = function(point) {
+  var neighbors = [],
+    distX,
+    distY,
+    distSq,
+    position;
+
+  for(var i=0; i<this.boids.length; i++) {
+    position = this.boids[i].position;
+
+    distX = position.x - point.x;
+    distY = position.y - point.y;
+
+    distSq = distX * distX + distY * distY;
+
+    if(distSq < this.maxDistSq) {
+      neighbors.push({
+        neighbor : this.boids[i],
+        distSq : distSq
+      });
+    }
+    
+  }
+  
+  return neighbors;
+}
 
 Boids.prototype.calcCohesion = function(boid) {
   var total = new Vector(0, 0),
@@ -184,6 +212,38 @@ Boids.prototype.tick = function() {
   }
 
   this.emit('tick', this.boids);
+};
+
+Boids.prototype.spread = function() {
+
+  var maxX = 0,
+    maxY = 0,
+    minX = 0,
+    minY = 0,
+    spreadX,
+    spreadY,
+    position;
+
+  for(var i=0; i<this.boids.length; i++) {
+    position = this.boids[i].position;
+
+    if(maxX < position.x)
+      maxX = position.x;
+
+    if(maxY < position.y)
+      maxY = position.y;
+
+    if(minX > position.x)
+      minX = position.x;
+
+    if(minY > position.y)
+      minY = position.y;
+  }
+
+  spreadX = (maxX - minX);
+  spreadY = (maxY - minY);
+
+  return spreadX * spreadX + spreadY * spreadY;
 };
 
 function isInFrontOf(boid, point) {

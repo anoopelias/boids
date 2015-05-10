@@ -4,9 +4,6 @@ function benchmark(boids) {
       i = ticks,
       start;
 
-    var warmup = 10000;
-    while (warmup--) b.tick();
-
     start = +new Date();
     while (i--) b.tick();
 

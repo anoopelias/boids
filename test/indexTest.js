@@ -152,6 +152,16 @@ describe('Boid', function() {
 
   });
 
+  it.only('should find the spread', function() {
+    var boids = new Boids(defaultOptions);
+
+    boids.boids = [boid3, boid2];
+    assert.equal(7200, boids.spread());
+
+    boids.boids = [boid3, boid2, boid4];
+    assert.equal(9800, boids.spread());
+  });
+
   function assertBoid(boid, val) {
     assertApprox(boid.position.x, val[0], 4);
     assertApprox(boid.position.y, val[1], 4);

@@ -59,3 +59,23 @@
 350 boids: 489 ticks/sec
 400 boids: 439 ticks/sec
 450 boids: 403 ticks/sec
+
+-- Experiment BruteForce vs. K-D Tree
+
+## K-D Tree
+50 boids: 2465 ticks/sec
+100 boids: 917 ticks/sec
+150 boids: 546 ticks/sec
+200 boids: 472 ticks/sec
+250 boids: 363 ticks/sec
+300 boids: 265 ticks/sec
+350 boids: 189 ticks/sec
+400 boids: 169 ticks/sec
+## Brute-Force
+50 boids: 2364 ticks/sec
+100 boids: 816 ticks/sec
+150 boids: 489 ticks/sec
+200 boids: 294 ticks/sec
+250 boids: 201 ticks/sec
+300 boids: 143 ticks/sec
+
