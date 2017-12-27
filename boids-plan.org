@@ -1,0 +1,10 @@
+* TODO Cleanup and Modernize
+** TODO Add favicon
+** TODO Remove IE6-10 Support
+*** TODO Remove contents in the beginning of html
+*** TODO Show message that the browser is not supported
+** TODO Fix Karma and test cases
+** TODO Fix Testcases
+* TODO Benchmark current performance
+* TODO Improve JavaScript Performance
+* TODO Implement WebAssembly using Rust
