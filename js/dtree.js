@@ -20,14 +20,15 @@ Dtree.prototype.neighbors = function(point, radiusSq) {
   var objects = [],
     stack = [this.root],
     distSq,
-    distX, distY,
+    distX,
+    distY,
     node,
     cmp,
     position,
     dist2line;
 
   // Not speeding up enough with recursion
-  while(stack.length > 0) {
+  while (stack.length > 0) {
     node = stack.pop();
     position = node.value.position;
     isEven = node.isEven;
@@ -36,33 +37,31 @@ Dtree.prototype.neighbors = function(point, radiusSq) {
     distY = point.y - position.y;
     distSq = distX * distX + distY * distY;
 
-    if(distSq <= radiusSq)
+    if (distSq <= radiusSq)
       objects.push({
         neighbor: node.value,
         distSq: distSq
       });
 
-    cmp = (isEven ? (distY || distX) : (distX || distY));
+    cmp = isEven ? distY || distX : distX || distY;
     dist2line = Math.pow(isEven ? distY : distX, 2);
 
-    if(node.left && (cmp <= 0 || dist2line <= radiusSq))
-      stack.push(node.left);
+    if (node.left && (cmp <= 0 || dist2line <= radiusSq)) stack.push(node.left);
 
-    if(node.right && (cmp >= 0 || dist2line <= radiusSq))
+    if (node.right && (cmp >= 0 || dist2line <= radiusSq))
       stack.push(node.right);
-
   }
 
   return objects;
 };
 
 function insert(node, obj, isEven) {
-  if(!node) {
-    return { value : obj, isEven: isEven };
+  if (!node) {
+    return { value: obj, isEven: isEven };
   }
 
   var cmp = obj.compare(node.value, isEven);
-  if(cmp < 0) {
+  if (cmp < 0) {
     node.left = insert(node.left, obj, !isEven);
   } else if (cmp > 0) {
     node.right = insert(node.right, obj, !isEven);
@@ -72,26 +71,28 @@ function insert(node, obj, isEven) {
 }
 
 function contains(node, obj, isEven) {
-  if(!node)
-    return false;
+  if (!node) return false;
 
   var cmp = obj.compare(node.value, isEven);
 
-  if(cmp < 0)
-    return contains(node.left, obj, !isEven);
-  else if (cmp > 0)
-    return contains(node.right, obj, !isEven);
+  if (cmp < 0) return contains(node.left, obj, !isEven);
+  else if (cmp > 0) return contains(node.right, obj, !isEven);
 
   return true;
-
 }
 
 function toString(node) {
-  if(!node) {
-    return '';
+  if (!node) {
+    return "";
   }
 
-  return '{ L:' + toString(node.left) +
-    ', N:' + node.value +
-    ', R:' + toString(node.right) + '}';
+  return (
+    "{ L:" +
+    toString(node.left) +
+    ", N:" +
+    node.value +
+    ", R:" +
+    toString(node.right) +
+    "}"
+  );
 }

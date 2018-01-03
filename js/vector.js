@@ -1,4 +1,3 @@
-
 function Vector(x, y) {
   this.x = x;
   this.y = y;
@@ -9,8 +8,7 @@ Vector.prototype.add = function(v) {
 };
 
 Vector.prototype.distSquared = function(v) {
-  return Math.pow(this.x - v.x, 2) +
-    Math.pow(this.y - v.y, 2);
+  return Math.pow(this.x - v.x, 2) + Math.pow(this.y - v.y, 2);
 };
 
 Vector.prototype.distance = function(v) {
@@ -32,8 +30,7 @@ Vector.prototype.magnitude = function() {
 Vector.prototype.normalize = function() {
   var magnitude = this.magnitude();
 
-  if(magnitude === 0)
-    return new Vector(0, 0);
+  if (magnitude === 0) return new Vector(0, 0);
 
   return new Vector(this.x / magnitude, this.y / magnitude);
 };
@@ -47,8 +44,7 @@ Vector.prototype.divideBy = function(s) {
 };
 
 Vector.prototype.limit = function(s) {
-  if(this.magnitude() > s)
-    return this.normalize().multiplyBy(s);
+  if (this.magnitude() > s) return this.normalize().multiplyBy(s);
 
   return this;
 };
@@ -64,8 +60,10 @@ Vector.prototype.angle = function(p1, p2) {
 };
 
 Vector.prototype.compare = function(that, y) {
-  return (y && (this.y - that.y || this.x - that.x)) ||
-    (this.x - that.x || this.y - that.y);
+  return (
+    (y && (this.y - that.y || this.x - that.x)) ||
+    (this.x - that.x || this.y - that.y)
+  );
 };
 
 Vector.prototype.toString = function() {

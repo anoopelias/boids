@@ -1,4 +1,4 @@
-describe('Boid', function() {
+describe("Boid", function() {
   var defaultOptions = {
     speedLimit: 1,
     accelerationLimit: 0.03,
@@ -10,16 +10,16 @@ describe('Boid', function() {
     alignmentForce: 2
   };
 
-  var Boids = require('../js/'),
-    Vector = require('../js/vector'),
-    Boid = require('../js/boid'),
-    assert = require('assert'),
+  var Boids = require("../js/"),
+    Vector = require("../js/vector"),
+    Boid = require("../js/boid"),
+    assert = require("assert"),
     boid1 = new Boid(new Vector(0, 0), new Vector(0.5, 0.5)),
     boid2 = new Boid(new Vector(10, 10), new Vector(0, 0)),
     boid3 = new Boid(new Vector(60, 60), new Vector(0, 0)),
     boid4 = new Boid(new Vector(-10, -10), new Vector(0, 0));
 
-  it('should calculate separation', function() {
+  it("should calculate separation", function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid2];
     boids.init();
@@ -27,10 +27,9 @@ describe('Boid', function() {
     var sep = boids.calcSeparation(boid1);
     assertApprox(sep.x, 0.0212, 4);
     assertApprox(sep.y, 0.0212, 4);
-
   });
 
-  it('should have zero separation for far away boids', function() {
+  it("should have zero separation for far away boids", function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid3];
     boids.init();
@@ -40,7 +39,7 @@ describe('Boid', function() {
     assert.equal(sep.y, 0);
   });
 
-  it('should have non-zero separation for boids behind them', function() {
+  it("should have non-zero separation for boids behind them", function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid4];
     boids.init();
@@ -48,9 +47,8 @@ describe('Boid', function() {
     var sep = boids.calcSeparation(boid1);
     assertApprox(sep.x, -0.0212, 4);
     assertApprox(sep.y, -0.0212, 4);
-
   });
-  it('should have zero separation for boids in the same location', function() {
+  it("should have zero separation for boids in the same location", function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, Object.create(boid1)];
     boids.init();
@@ -58,11 +56,9 @@ describe('Boid', function() {
     var sep = boids.calcSeparation(boid1);
     assert.equal(sep.x, 0);
     assert.equal(sep.y, 0);
-
   });
 
-
-  it('should calculate cohesion', function() {
+  it("should calculate cohesion", function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid2];
     boids.init();
@@ -72,7 +68,7 @@ describe('Boid', function() {
     assertApprox(sep.y, 0.0212, 4);
   });
 
-  it('should have zero cohesion for far away boids', function() {
+  it("should have zero cohesion for far away boids", function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid3];
     boids.init();
@@ -82,7 +78,7 @@ describe('Boid', function() {
     assert.equal(sep.y, 0);
   });
 
-  it('should have zero cohesion for boids behind them', function() {
+  it("should have zero cohesion for boids behind them", function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid4];
     boids.init();
@@ -92,7 +88,7 @@ describe('Boid', function() {
     assert.equal(sep.y, 0);
   });
 
-  it('should calculate alignment', function() {
+  it("should calculate alignment", function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid2];
     boids.init();
@@ -102,7 +98,7 @@ describe('Boid', function() {
     assertApprox(sep.y, -0.0212, 4);
   });
 
-  it('should have zero alignment for far away boids', function() {
+  it("should have zero alignment for far away boids", function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid3];
     boids.init();
@@ -112,7 +108,7 @@ describe('Boid', function() {
     assert.equal(sep.y, 0);
   });
 
-  it('should have zero alignment for boids behind them', function() {
+  it("should have zero alignment for boids behind them", function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid4];
     boids.init();
@@ -122,7 +118,7 @@ describe('Boid', function() {
     assert.equal(sep.y, 0);
   });
 
-  it('should tick', function() {
+  it("should tick", function() {
     var boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid2, boid3, boid4];
 
@@ -145,11 +141,10 @@ describe('Boid', function() {
     assertBoid(boid4, [-10.2546, -10.2546, -0.1273, -0.1273]);
 
     boids.tick();
-    assertBoid(boid1, [1.8727, 1.8727, 0.5000, 0.5000]);
+    assertBoid(boid1, [1.8727, 1.8727, 0.5, 0.5]);
     assertBoid(boid2, [10.4243, 10.4243, 0.1697, 0.1697]);
     assertBoid(boid3, [60, 60, 0, 0]);
     assertBoid(boid4, [-10.4243, -10.4243, -0.1697, -0.1697]);
-
   });
 
   function assertBoid(boid, val) {
@@ -158,11 +153,9 @@ describe('Boid', function() {
 
     assertApprox(boid.speed.x, val[2], 4);
     assertApprox(boid.speed.y, val[3], 4);
-
   }
 
   function assertApprox(val, val2, d) {
     assert.equal(val.toFixed(d), val2.toFixed(d));
   }
-
 });

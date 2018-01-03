@@ -1,4 +1,3 @@
-
 module.exports = Boid;
 
 function Boid(position, speed) {

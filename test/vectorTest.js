@@ -1,7 +1,6 @@
 describe("Vector", function() {
-
-  var Vector = require('../js/vector'),
-    assert = require('assert');
+  var Vector = require("../js/vector"),
+    assert = require("assert");
 
   it("should compare on x", function() {
     var c = new Vector(5, 19).compare(new Vector(10, 16), false);
@@ -10,7 +9,6 @@ describe("Vector", function() {
     c = new Vector(5, 15).compare(new Vector(1, 25), false);
     assert(c > 0);
   });
-
 
   it("should compare on y if x is equal", function() {
     var c = new Vector(5, 15).compare(new Vector(5, 25), false);
@@ -51,5 +49,4 @@ describe("Vector", function() {
     c = new Vector(5, 45).compare(new Vector(5, 45), false);
     assert(c === 0);
   });
-
 });
