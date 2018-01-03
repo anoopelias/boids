@@ -23,7 +23,7 @@ function dtreeBenchmark(Dtree) {
   var Vector = require('./vector');
   var Obj = require('./boid');
 
-  var objects = [], 
+  var objects = [],
     dtree = new Dtree(),
     radius = 60,
     n = 5000,

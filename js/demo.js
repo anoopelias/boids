@@ -18,7 +18,7 @@ canvas.addEventListener('click', function(e) {
     halfWidth = canvas.width/2;
   x = x - halfWidth;
   y = y - halfHeight;
-  if (boids.boids.length < 500) 
+  if (boids.boids.length < 500)
     boids.boids.push(
       new Boid(new Vector(x, y), new Vector(Math.random()*6-3,Math.random()*6-3))
     );
@@ -62,7 +62,7 @@ var countText = document.querySelector('[data-count]');
 var frames = fps({ every: 10, decay: 0.04 }).on('data', function(rate) {
   for (var i = 0; i < 3; i += 1) {
     if (rate <= 56 && boids.boids.length > 10) boids.boids.pop();
-    if (rate >= 60 && boids.boids.length < 300) 
+    if (rate >= 60 && boids.boids.length < 300)
       boids.boids.push(
         new Boid(new Vector(0,0), new Vector(Math.random()*6-3,Math.random()*6-3))
       );

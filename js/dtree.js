@@ -36,7 +36,7 @@ Dtree.prototype.neighbors = function(point, radiusSq) {
     distY = point.y - position.y;
     distSq = distX * distX + distY * distY;
 
-    if(distSq <= radiusSq) 
+    if(distSq <= radiusSq)
       objects.push({
         neighbor: node.value,
         distSq: distSq
@@ -72,11 +72,11 @@ function insert(node, obj, isEven) {
 }
 
 function contains(node, obj, isEven) {
-  if(!node) 
+  if(!node)
     return false;
 
   var cmp = obj.compare(node.value, isEven);
-  
+
   if(cmp < 0)
     return contains(node.left, obj, !isEven);
   else if (cmp > 0)
@@ -91,7 +91,7 @@ function toString(node) {
     return '';
   }
 
-  return '{ L:' + toString(node.left) + 
-    ', N:' + node.value + 
+  return '{ L:' + toString(node.left) +
+    ', N:' + node.value +
     ', R:' + toString(node.right) + '}';
 }

@@ -69,7 +69,7 @@ describe("Dtree", function() {
     dtree.insert(objM10);
     dtree.insert(obj1010);
 
-    var neighbors = dtree.neighbors(new Vector(3, 3), 25); 
+    var neighbors = dtree.neighbors(new Vector(3, 3), 25);
     assert(arrayContains(neighbors, obj67));
     assert(arrayContains(neighbors, objM10));
     assert(!arrayContains(neighbors, obj1010));
@@ -89,7 +89,7 @@ describe("Dtree", function() {
     dtree.insert(obj1010);
     dtree.insert(obj33);
 
-    var neighbors = dtree.neighbors(new Vector(3, 3), 4); 
+    var neighbors = dtree.neighbors(new Vector(3, 3), 4);
     assert(arrayContains(neighbors, obj33));
     assert(!arrayContains(neighbors, obj67));
     assert(!arrayContains(neighbors, objM10));
@@ -97,7 +97,7 @@ describe("Dtree", function() {
   });
 
   it("should be able find all neighbors similar to brute force", function() {
-    var objects = [], 
+    var objects = [],
       dtree = new Dtree(),
       radius = 60,
       n = 500;
