@@ -3,9 +3,12 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
-  entry: './js/demo.js',
+  entry: {
+    bundle: './js/demo.js',
+    browserBenchmark: './js/browser-benchmark.js',
+  },
   output: {
-    filename: 'bundle.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'dist')
   },
   devtool: 'inline-source-map',
@@ -28,7 +31,13 @@ module.exports = {
     new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
         template: 'index.html',
-        favicon: 'favicon.ico'
-    })
+        favicon: 'favicon.ico',
+        chunks: ['bundle'],
+    }),
+    new HtmlWebpackPlugin({
+        filename: 'benchmark.html',
+        template: 'benchmark.html',
+        chunks: ['browserBenchmark'],
+    }),
   ]
 };
