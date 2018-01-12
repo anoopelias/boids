@@ -11,7 +11,6 @@
     "fps": "0.0.3",
     "html-webpack-plugin": "^2.30.1",
     "inherits": "~1.0.0",
-    "jshint": "^2.6.3",
     "mocha": "^2.2.1",
     "prettier": "^1.9.2",
     "ticker": "0.0.1",
@@ -36,5 +35,8 @@
     "emergence"
   ],
   "author": "Anoop Elias<anoopelias@gmail.com> (http:/anoopelias.github.io/)",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "jshint": "^2.9.5"
+  }
 }
