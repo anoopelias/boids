@@ -16,7 +16,7 @@
     "prettier": "^1.9.2",
     "ticker": "0.0.1",
     "webpack": "^3.10.0",
-    "webpack-dev-server": "^2.9.7"
+    "webpack-dev-server": "^2.10.1"
   },
   "main": "index.html",
   "scripts": {
