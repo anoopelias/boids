@@ -3,18 +3,12 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
-<<<<<<< HEAD
   entry: {
     bundle: './js/demo.js',
     browserBenchmark: './js/browser-benchmark.js',
   },
   output: {
     filename: '[name].js',
-=======
-  entry: './js/demo.js',
-  output: {
-    filename: 'bundle.js',
->>>>>>> master
     path: path.resolve(__dirname, 'dist')
   },
   devtool: 'inline-source-map',
