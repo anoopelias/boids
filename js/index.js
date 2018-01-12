@@ -1,7 +1,6 @@
 var EventEmitter = require("events").EventEmitter,
   inherits = require("inherits"),
   Vector = require("./vector"),
-  Dtree = require("./dtree"),
   Boid = require("./boid");
 
 module.exports = Boids;
@@ -50,20 +49,26 @@ function Boids(opts, callback) {
 inherits(Boids, EventEmitter);
 
 Boids.prototype.init = function() {
-  var dtree = new Dtree();
-  for (var i = 0; i < this.boids.length; i++) {
-    dtree.insert(this.boids[i]);
-  }
-
   this.tickData = {};
-  this.tickData.dtree = dtree;
 };
 
 Boids.prototype.findNeighbors = function(point) {
-  this.tickData.neighbors = this.tickData.dtree.neighbors(
-    point,
-    this.maxDistSq
-  );
+  let neighbors = (this.tickData.neighbors = []);
+  for (let i = 0; i < this.boids.length; i++) {
+    let boid = this.boids[i];
+
+    if (point === boid.position) {
+      continue;
+    }
+
+    let distSq = boid.position.distSquared(point);
+    if (distSq < this.maxDistSq) {
+      neighbors.push({
+        neighbor: this.boids[i],
+        distSq: distSq
+      });
+    }
+  }
 };
 
 Boids.prototype.calcCohesion = function(boid) {
