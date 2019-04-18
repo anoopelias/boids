@@ -37,6 +37,7 @@
   "author": "Anoop Elias<anoopelias@gmail.com> (http:/anoopelias.github.io/)",
   "license": "MIT",
   "dependencies": {
+    "gpu.js": "^1.0.0",
     "jshint": "^2.9.5"
   }
 }
