@@ -14,7 +14,7 @@
     "mocha": "^6.0.2",
     "prettier": "^1.9.2",
     "ticker": "0.1.0",
-    "webpack": "^4.29.6",
+    "webpack": "^4.47.0",
     "webpack-cli": "^3.3.0",
     "webpack-dev-server": "^3.2.1"
   },
