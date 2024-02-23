@@ -4,19 +4,18 @@
   "version": "1.0.0",
   "devDependencies": {
     "@babel/core": "^7.4.0",
-    "babel-loader": "^8.0.5",
-    "babel-preset-env": "^1.6.1",
-    "clean-webpack-plugin": "^2.0.1",
+    "babel-loader": "^9.1.3",
+    "@babel/preset-env": "7.23.9",
     "debounce": "1.2.0",
     "fps": "0.0.3",
-    "html-webpack-plugin": "^3.2.0",
+    "html-webpack-plugin": "^5.6.0",
     "inherits": "~2.0.3",
     "mocha": "^6.0.2",
     "prettier": "^1.9.2",
     "ticker": "0.1.0",
-    "webpack": "^4.47.0",
-    "webpack-cli": "^3.3.0",
-    "webpack-dev-server": "^3.2.1"
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.2"
   },
   "main": "index.html",
   "scripts": {
