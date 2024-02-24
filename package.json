@@ -22,7 +22,8 @@
     "prettier": "prettier --write js/** test/**",
     "test": "jshint js/ test/ && mocha test",
     "start": "webpack-dev-server --port 3000",
-    "build": "webpack"
+    "build": "webpack",
+    "benchmark": "node js/benchmark.js"
   },
   "repository": {
     "type": "git",
