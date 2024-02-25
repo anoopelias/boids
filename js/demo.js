@@ -1,9 +1,9 @@
-const fps = require("fps"),
-  ticker = require("ticker"),
-  debounce = require("debounce"),
-  Boids = require("./"),
-  Vector = require("./vector"),
-  Boid = require("./boid");
+import fps from "fps";
+import ticker from "ticker";
+import debounce from "debounce";
+import Boids from "./";
+import Vector from "./vector";
+import Boid from "./boid";
 
 const anchor = document.createElement("a"),
   canvas = document.createElement("canvas"),

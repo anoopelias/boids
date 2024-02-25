@@ -1,5 +1,6 @@
+import Boids from './';
+
 function tickBenchmark() {
-  const Boids = require("./");
   const boidNums = [150, 300, 450, 600, 750];
 
   let numReports = [];

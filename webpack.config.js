@@ -6,6 +6,9 @@ module.exports = {
     bundle: './js/bootstrap.js',
     browserBenchmark: './js/browser-benchmark.js',
   },
+  experiments: {
+    asyncWebAssembly: true,
+  },
   mode: 'development',
   module: {
     rules: [

@@ -1,9 +1,8 @@
-const Vector = require("./vector"),
-  Boid = require("./boid");
+import { greet } from "../wasm/pkg/wasm"
+import Vector from "./vector";
+import Boid from "./boid";
 
-module.exports = Boids;
-
-function Boids(opts) {
+export default function Boids(opts) {
   if (!(this instanceof Boids)) return new Boids(opts);
 
   opts = opts || {};

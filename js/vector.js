@@ -71,4 +71,4 @@ Vector.prototype.toString = function() {
   return "{x:" + this.x + ", y:" + this.y + "}";
 };
 
-module.exports = Vector;
+export default Vector;
