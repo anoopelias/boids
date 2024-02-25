@@ -10,12 +10,13 @@
     "fps": "0.0.3",
     "html-webpack-plugin": "^5.6.0",
     "inherits": "~2.0.3",
-    "mocha": "^6.0.2",
+    "mocha": "^10.3.0",
     "prettier": "^1.9.2",
     "ticker": "0.1.0",
     "webpack": "^5.90.3",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.0.2"
+    "webpack-dev-server": "^5.0.2",
+    "jshint": "^2.13.6"
   },
   "main": "index.html",
   "scripts": {
@@ -36,8 +37,5 @@
     "emergence"
   ],
   "author": "Anoop Elias<anoopelias@gmail.com> (http:/anoopelias.github.io/)",
-  "license": "MIT",
-  "dependencies": {
-    "jshint": "^2.9.5"
-  }
+  "license": "MIT"
 }

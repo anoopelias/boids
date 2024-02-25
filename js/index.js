@@ -1,4 +1,4 @@
-import { greet } from "../wasm/pkg/wasm"
+import { greet } from "../wasm/pkg/wasm";
 import Vector from "./vector";
 import Boid from "./boid";
 
