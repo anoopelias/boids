@@ -1,20 +1,23 @@
+import Boids from './index.js';
+
 function benchmark(boids) {
   function test(count, ticks) {
-    const b = boids({ boids: count });
-    let i = ticks;
+    var b = boids({ boids: count }),
+      i = ticks,
+      start;
 
-    let warmup = 10000;
+    var warmup = 10000;
     while (warmup--) b.tick();
 
-    const start = +new Date();
+    start = +new Date();
     while (i--) b.tick();
 
     return ticks / ((new Date() - start) / 1000);
   }
 
-  for (let i = 50; i <= 500; i += 50) {
+  for (var i = 50; i <= 500; i += 50) {
     console.log(i + " boids: " + ~~test(i, 5000) + " ticks/sec");
   }
 }
 
-benchmark(require("./"));
+benchmark(Boids);
