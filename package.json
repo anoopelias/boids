@@ -25,6 +25,8 @@
     "prettier": "prettier --write js/** test/**",
     "test": "jshint js/ test/ && mocha test",
     "start": "webpack-dev-server --port 3000",
+    "build-wasm-nodejs": "cd wasm && wasm-pack build --target nodejs",
+    "build-wasm": "cd wasm && wasm-pack build",
     "build": "webpack",
     "benchmark": "node js/benchmark.js"
   },
