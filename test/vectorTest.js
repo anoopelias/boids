@@ -1,7 +1,6 @@
+import assert from 'assert';
+import Vector from '../js/vector.js';
 describe("Vector", function() {
-  const Vector = require("../js/vector"),
-    assert = require("assert");
-
   it("should compare on x", function() {
     let c = new Vector(5, 19).compare(new Vector(10, 16), false);
     assert(c < 0);

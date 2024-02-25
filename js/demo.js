@@ -1,9 +1,9 @@
 import fps from "fps";
 import ticker from "ticker";
 import debounce from "debounce";
-import Boids from "./";
-import Vector from "./vector";
-import Boid from "./boid";
+import Boids from "./index.js";
+import Vector from "./vector.js";
+import Boid from "./boid.js";
 
 const anchor = document.createElement("a"),
   canvas = document.createElement("canvas"),

@@ -1,6 +1,6 @@
-import { greet } from "../wasm/pkg/wasm";
-import Vector from "./vector";
-import Boid from "./boid";
+import { greet } from '../wasm/pkg/wasm.js';
+import Vector from "./vector.js";
+import Boid from "./boid.js";
 
 export default function Boids(opts) {
   if (!(this instanceof Boids)) return new Boids(opts);

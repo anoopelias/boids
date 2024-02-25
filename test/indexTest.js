@@ -1,7 +1,7 @@
-const Boids = require("../js/"),
-  Vector = require("../js/vector"),
-  Boid = require("../js/boid"),
-  assert = require("assert");
+import assert from 'assert';
+import Boids from '../js/index.js';
+import Vector from '../js/vector.js';
+import Boid from '../js/boid.js';
 
 function makeOptions(force) {
   return {

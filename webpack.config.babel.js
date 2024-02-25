@@ -1,7 +1,7 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+import path from 'path';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 
-module.exports = {
+export default {
   entry: {
     bundle: './js/bootstrap.js',
     browserBenchmark: './js/browser-benchmark.js',
@@ -14,7 +14,7 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        include: path.resolve(__dirname, 'js'),
+        include: path.resolve(import.meta.dirname, 'js'),
         use: {
           loader: 'babel-loader',
           options: {

@@ -1,4 +1,4 @@
-import Boids from './';
+import Boids from './index.js';
 
 function tickBenchmark() {
   const boidNums = [150, 300, 450, 600, 750];
