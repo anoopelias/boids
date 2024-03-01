@@ -1,5 +1,5 @@
 describe("Boid", function() {
-  var defaultOptions = {
+  const defaultOptions = {
     speedLimit: 1,
     accelerationLimit: 0.03,
     separationDistance: 30,
@@ -10,7 +10,7 @@ describe("Boid", function() {
     alignmentForce: 2
   };
 
-  var Boids = require("../js/"),
+  const Boids = require("../js/"),
     Vector = require("../js/vector"),
     Boid = require("../js/boid"),
     assert = require("assert"),
@@ -20,106 +20,106 @@ describe("Boid", function() {
     boid4 = new Boid(new Vector(-10, -10), new Vector(0, 0));
 
   it("should calculate separation", function() {
-    var boids = new Boids(defaultOptions);
+    const boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid2];
     boids.init();
     boids.findNeighbors(boid1.position);
-    var sep = boids.calcSeparation(boid1);
+    const sep = boids.calcSeparation(boid1);
     assertApprox(sep.x, 0.0212, 4);
     assertApprox(sep.y, 0.0212, 4);
   });
 
   it("should have zero separation for far away boids", function() {
-    var boids = new Boids(defaultOptions);
+    const boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid3];
     boids.init();
     boids.findNeighbors(boid1.position);
-    var sep = boids.calcSeparation(boid1);
+    const sep = boids.calcSeparation(boid1);
     assert.equal(sep.x, 0);
     assert.equal(sep.y, 0);
   });
 
   it("should have non-zero separation for boids behind them", function() {
-    var boids = new Boids(defaultOptions);
+    const boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid4];
     boids.init();
     boids.findNeighbors(boid1.position);
-    var sep = boids.calcSeparation(boid1);
+    const sep = boids.calcSeparation(boid1);
     assertApprox(sep.x, -0.0212, 4);
     assertApprox(sep.y, -0.0212, 4);
   });
   it("should have zero separation for boids in the same location", function() {
-    var boids = new Boids(defaultOptions);
+    const boids = new Boids(defaultOptions);
     boids.boids = [boid1, Object.create(boid1)];
     boids.init();
     boids.findNeighbors(boid1.position);
-    var sep = boids.calcSeparation(boid1);
+    const sep = boids.calcSeparation(boid1);
     assert.equal(sep.x, 0);
     assert.equal(sep.y, 0);
   });
 
   it("should calculate cohesion", function() {
-    var boids = new Boids(defaultOptions);
+    const boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid2];
     boids.init();
     boids.findNeighbors(boid1.position);
-    var sep = boids.calcCohesion(boid1);
+    const sep = boids.calcCohesion(boid1);
     assertApprox(sep.x, 0.0212, 4);
     assertApprox(sep.y, 0.0212, 4);
   });
 
   it("should have zero cohesion for far away boids", function() {
-    var boids = new Boids(defaultOptions);
+    const boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid3];
     boids.init();
     boids.findNeighbors(boid1.position);
-    var sep = boids.calcCohesion(boid1);
+    const sep = boids.calcCohesion(boid1);
     assert.equal(sep.x, 0);
     assert.equal(sep.y, 0);
   });
 
   it("should have zero cohesion for boids behind them", function() {
-    var boids = new Boids(defaultOptions);
+    const boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid4];
     boids.init();
     boids.findNeighbors(boid1.position);
-    var sep = boids.calcCohesion(boid1);
+    const sep = boids.calcCohesion(boid1);
     assert.equal(sep.x, 0);
     assert.equal(sep.y, 0);
   });
 
   it("should calculate alignment", function() {
-    var boids = new Boids(defaultOptions);
+    const boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid2];
     boids.init();
     boids.findNeighbors(boid1.position);
-    var sep = boids.calcAlignment(boid1);
+    const sep = boids.calcAlignment(boid1);
     assertApprox(sep.x, -0.0212, 4);
     assertApprox(sep.y, -0.0212, 4);
   });
 
   it("should have zero alignment for far away boids", function() {
-    var boids = new Boids(defaultOptions);
+    const boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid3];
     boids.init();
     boids.findNeighbors(boid1.position);
-    var sep = boids.calcAlignment(boid1);
+    const sep = boids.calcAlignment(boid1);
     assert.equal(sep.x, 0);
     assert.equal(sep.y, 0);
   });
 
   it("should have zero alignment for boids behind them", function() {
-    var boids = new Boids(defaultOptions);
+    const boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid4];
     boids.init();
     boids.findNeighbors(boid1.position);
-    var sep = boids.calcAlignment(boid1);
+    const sep = boids.calcAlignment(boid1);
     assert.equal(sep.x, 0);
     assert.equal(sep.y, 0);
   });
 
   it("should tick", function() {
-    var boids = new Boids(defaultOptions);
+    const boids = new Boids(defaultOptions);
     boids.boids = [boid1, boid2, boid3, boid4];
 
     boids.tick();

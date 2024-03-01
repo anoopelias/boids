@@ -1,17 +1,17 @@
-var fps = require("fps"),
+const fps = require("fps"),
   ticker = require("ticker"),
   debounce = require("debounce"),
   Boids = require("./"),
   Vector = require("./vector"),
   Boid = require("./boid");
 
-var anchor = document.createElement("a"),
+const anchor = document.createElement("a"),
   canvas = document.createElement("canvas"),
   ctx = canvas.getContext("2d"),
   boids = Boids();
 
 canvas.addEventListener("click", function(e) {
-  var x = e.pageX,
+  let x = e.pageX,
     y = e.pageY,
     halfHeight = canvas.height / 2,
     halfWidth = canvas.width / 2;
@@ -44,7 +44,7 @@ ticker(window, 60)
     boids.tick();
   })
   .on("draw", function() {
-    var boidData = boids.boids,
+    const boidData = boids.boids,
       halfHeight = canvas.height / 2,
       halfWidth = canvas.width / 2;
 
@@ -52,7 +52,7 @@ ticker(window, 60)
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = "#543D5E";
-    for (var i = 0, l = boidData.length, x, y; i < l; i += 1) {
+    for (let i = 0, l = boidData.length, x, y; i < l; i += 1) {
       x = boidData[i].position.x;
       y = boidData[i].position.y;
       // wrap around the screen
@@ -64,10 +64,10 @@ ticker(window, 60)
     }
   });
 
-var frameText = document.querySelector("[data-fps]");
-var countText = document.querySelector("[data-count]");
-var frames = fps({ every: 10, decay: 0.04 }).on("data", function(rate) {
-  for (var i = 0; i < 3; i += 1) {
+const frameText = document.querySelector("[data-fps]");
+const countText = document.querySelector("[data-count]");
+const frames = fps({ every: 10, decay: 0.04 }).on("data", function(rate) {
+  for (let i = 0; i < 3; i += 1) {
     if (rate <= 56 && boids.boids.length > 10) boids.boids.pop();
     if (rate >= 60 && boids.boids.length < 300)
       boids.boids.push(

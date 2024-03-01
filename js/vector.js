@@ -28,7 +28,7 @@ Vector.prototype.magnitude = function() {
 };
 
 Vector.prototype.normalize = function() {
-  var magnitude = this.magnitude();
+  const magnitude = this.magnitude();
 
   if (magnitude === 0) return new Vector(0, 0);
 
@@ -50,7 +50,7 @@ Vector.prototype.limit = function(s) {
 };
 
 Vector.prototype.angle = function(p1, p2) {
-  var v1 = this.subtract(p1).normalize(),
+  const v1 = this.subtract(p1).normalize(),
     v2 = this.subtract(p2).normalize(),
     // Rounding is because sometimes the value goes beyond 1.0
     // due to floating point precision errors

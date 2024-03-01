@@ -1,4 +1,4 @@
-var EventEmitter = require("events").EventEmitter,
+const EventEmitter = require("events").EventEmitter,
   inherits = require("inherits"),
   Vector = require("./vector"),
   Boid = require("./boid");
@@ -29,10 +29,10 @@ function Boids(opts, callback) {
     this.alignmentDistanceSq
   );
 
-  var boids = (this.boids = []);
+  const boids = (this.boids = []);
 
   for (
-    var i = 0, l = opts.boids === undefined ? 150 : opts.boids;
+    let i = 0, l = opts.boids === undefined ? 150 : opts.boids;
     i < l;
     i += 1
   ) {
@@ -72,13 +72,13 @@ Boids.prototype.findNeighbors = function(point) {
 };
 
 Boids.prototype.calcCohesion = function(boid) {
-  var total = new Vector(0, 0),
+  let total = new Vector(0, 0),
     distSq,
     target,
     neighbors = this.tickData.neighbors,
     count = 0;
 
-  for (var i = 0; i < neighbors.length; i++) {
+  for (let i = 0; i < neighbors.length; i++) {
     target = neighbors[i].neighbor;
     if (boid === target) continue;
 
@@ -103,13 +103,13 @@ Boids.prototype.calcCohesion = function(boid) {
 };
 
 Boids.prototype.calcSeparation = function(boid) {
-  var total = new Vector(0, 0),
+  let total = new Vector(0, 0),
     target,
     distSq,
     neighbors = this.tickData.neighbors,
     count = 0;
 
-  for (var i = 0; i < neighbors.length; i++) {
+  for (let i = 0; i < neighbors.length; i++) {
     target = neighbors[i].neighbor;
     if (boid === target) continue;
 
@@ -135,13 +135,13 @@ Boids.prototype.calcSeparation = function(boid) {
 };
 
 Boids.prototype.calcAlignment = function(boid) {
-  var total = new Vector(0, 0),
+  let total = new Vector(0, 0),
     target,
     distSq,
     neighbors = this.tickData.neighbors,
     count = 0;
 
-  for (var i = 0; i < neighbors.length; i++) {
+  for (let i = 0; i < neighbors.length; i++) {
     target = this.tickData.neighbors[i].neighbor;
     if (boid === target) continue;
 
@@ -165,11 +165,10 @@ Boids.prototype.calcAlignment = function(boid) {
 };
 
 Boids.prototype.tick = function() {
-  var boid;
   this.init();
 
-  for (var i = 0; i < this.boids.length; i++) {
-    boid = this.boids[i];
+  for (let i = 0; i < this.boids.length; i++) {
+    let boid = this.boids[i];
     this.findNeighbors(boid.position);
 
     boid.acceleration = this.calcCohesion(boid)
@@ -180,7 +179,7 @@ Boids.prototype.tick = function() {
 
   delete this.tickData;
 
-  for (var j = 0; j < this.boids.length; j++) {
+  for (let j = 0; j < this.boids.length; j++) {
     boid = this.boids[j];
     boid.speed = boid.speed.add(boid.acceleration).limit(this.speedLimit);
 
