@@ -40,6 +40,7 @@ Vector.prototype.subtract = function(v) {
 };
 
 Vector.prototype.divideBy = function(s) {
+  if (s === 0) return new Vector(0, 0);
   return this.multiplyBy(1 / s);
 };
 
