@@ -1,15 +1,17 @@
-describe("Boid", function() {
-  const defaultOptions = {
+function makeOptions(force) {
+  return {
     speedLimit: 1,
     accelerationLimit: 0.03,
     separationDistance: 30,
     alignmentDistance: 60,
     cohesionDistance: 60,
-    separationForce: 2,
-    cohesionForce: 1,
-    alignmentForce: 2
+    separationForce: !isNaN(force && force[0])? force[0] : 2,
+    cohesionForce: !isNaN(force && force[1])? force[1] : 1,
+    alignmentForce: !isNaN(force && force[2])? force[2] : 2,
   };
+}
 
+describe("Boid", function() {
   const Boids = require("../js/"),
     Vector = require("../js/vector"),
     Boid = require("../js/boid"),
@@ -20,7 +22,7 @@ describe("Boid", function() {
     boid4 = new Boid(new Vector(-10, -10), new Vector(0, 0));
 
   it("should calculate separation", function() {
-    const boids = new Boids(defaultOptions);
+    const boids = new Boids(makeOptions([1, 0, 0]));
     boids.boids = [boid1, boid2];
     boids.init();
     boids.findNeighbors(boid1.position);
@@ -30,7 +32,7 @@ describe("Boid", function() {
   });
 
   it("should have zero separation for far away boids", function() {
-    const boids = new Boids(defaultOptions);
+    const boids = new Boids(makeOptions([1, 0, 0]));
     boids.boids = [boid1, boid3];
     boids.init();
     boids.findNeighbors(boid1.position);
@@ -40,7 +42,7 @@ describe("Boid", function() {
   });
 
   it("should have non-zero separation for boids behind them", function() {
-    const boids = new Boids(defaultOptions);
+    const boids = new Boids(makeOptions([1, 0, 0]));
     boids.boids = [boid1, boid4];
     boids.init();
     boids.findNeighbors(boid1.position);
@@ -49,7 +51,7 @@ describe("Boid", function() {
     assertApprox(sep.y, -0.0212, 4);
   });
   it("should have zero separation for boids in the same location", function() {
-    const boids = new Boids(defaultOptions);
+    const boids = new Boids(makeOptions([1, 0, 0]));
     boids.boids = [boid1, Object.create(boid1)];
     boids.init();
     boids.findNeighbors(boid1.position);
@@ -59,7 +61,7 @@ describe("Boid", function() {
   });
 
   it("should calculate cohesion", function() {
-    const boids = new Boids(defaultOptions);
+    const boids = new Boids(makeOptions([0, 1, 0]));
     boids.boids = [boid1, boid2];
     boids.init();
     boids.findNeighbors(boid1.position);
@@ -69,7 +71,7 @@ describe("Boid", function() {
   });
 
   it("should have zero cohesion for far away boids", function() {
-    const boids = new Boids(defaultOptions);
+    const boids = new Boids(makeOptions([0, 1, 0]));
     boids.boids = [boid1, boid3];
     boids.init();
     boids.findNeighbors(boid1.position);
@@ -79,7 +81,7 @@ describe("Boid", function() {
   });
 
   it("should have zero cohesion for boids behind them", function() {
-    const boids = new Boids(defaultOptions);
+    const boids = new Boids(makeOptions([0, 1, 0]));
     boids.boids = [boid1, boid4];
     boids.init();
     boids.findNeighbors(boid1.position);
@@ -89,7 +91,7 @@ describe("Boid", function() {
   });
 
   it("should calculate alignment", function() {
-    const boids = new Boids(defaultOptions);
+    const boids = new Boids(makeOptions([0, 0, 1]));
     boids.boids = [boid1, boid2];
     boids.init();
     boids.findNeighbors(boid1.position);
@@ -99,7 +101,7 @@ describe("Boid", function() {
   });
 
   it("should have zero alignment for far away boids", function() {
-    const boids = new Boids(defaultOptions);
+    const boids = new Boids(makeOptions([0, 0, 1]));
     boids.boids = [boid1, boid3];
     boids.init();
     boids.findNeighbors(boid1.position);
@@ -109,7 +111,7 @@ describe("Boid", function() {
   });
 
   it("should have zero alignment for boids behind them", function() {
-    const boids = new Boids(defaultOptions);
+    const boids = new Boids(makeOptions([0, 0, 1]));
     boids.boids = [boid1, boid4];
     boids.init();
     boids.findNeighbors(boid1.position);
@@ -119,7 +121,7 @@ describe("Boid", function() {
   });
 
   it("should tick", function() {
-    const boids = new Boids(defaultOptions);
+    const boids = new Boids(makeOptions());
     boids.boids = [boid1, boid2, boid3, boid4];
 
     boids.tick();
