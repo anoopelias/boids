@@ -20,7 +20,7 @@ pub struct Boid {
 
 #[wasm_bindgen]
 pub struct Boids {
-    boids: Vec<Boid>
+    boids: Vec<Boid>,
 }
 
 impl Boid {
@@ -38,9 +38,7 @@ impl Boid {
 impl Boids {
     pub fn new() -> Boids {
         let boids = vec![Boid::new(), Boid::new()];
-        Boids {
-            boids
-        }
+        Boids { boids }
     }
     pub fn get_boids(&self) -> *const Boid {
         self.boids.as_ptr()
