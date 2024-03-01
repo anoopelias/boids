@@ -7,19 +7,15 @@ use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
-    fn alert(s: &str);
     #[wasm_bindgen(js_namespace = console)]
     fn log(s: &str);
 }
 
-struct Xy {
-    x: f64,
-    y: f64,
-}
-
 pub struct Boid {
-    value: u8,
-    value2: u8,
+    pos_x: f64,
+    pos_y: f64,
+    vel_x: f64,
+    vel_y: f64,
 }
 
 #[wasm_bindgen]
@@ -30,8 +26,10 @@ pub struct Boids {
 impl Boid {
     fn new() -> Boid {
         Boid {
-            value: 20,
-            value2: 40
+            pos_x: 20.5,
+            pos_y: 40.2,
+            vel_x: 50.9,
+            vel_y: 51.9,
         }
     }
 }

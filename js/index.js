@@ -5,7 +5,7 @@ import Boid from "./boid.js";
 
 let wasmBoids = WasmBoids.new();
 let boidsPtr = wasmBoids.get_boids();
-const boids = new Uint8Array(memory.buffer, boidsPtr, 4);
+const boids = new Float64Array(memory.buffer, boidsPtr, 4);
 console.log(boids);
 
 export default function Boids(opts) {
