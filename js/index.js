@@ -20,9 +20,12 @@ function Boids(opts, callback) {
   this.alignmentDistanceSq = Math.pow(this.alignmentDistance, 2);
   this.cohesionDistance = opts.cohesionDistance || 60;
   this.cohesionDistanceSq = Math.pow(this.cohesionDistance, 2);
-  this.separationForce = !isNaN(opts.separationForce)? opts.separationForce : 2;
-  this.cohesionForce = !isNaN(opts.cohesionForce)? opts.cohesionForce : 1;
-  this.alignmentForce = !isNaN(opts.alignmentForce)? opts.alignmentForce : 1;
+  /* jshint laxbreak: true */
+  this.separationForce = !isNaN(opts.separationForce)
+    ? opts.separationForce
+    : 2;
+  this.cohesionForce = !isNaN(opts.cohesionForce) ? opts.cohesionForce : 1;
+  this.alignmentForce = !isNaN(opts.alignmentForce) ? opts.alignmentForce : 1;
   this.maxDistSq = Math.max(
     this.separationDistanceSq,
     this.cohesionDistanceSq,

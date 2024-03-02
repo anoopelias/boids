@@ -21,7 +21,7 @@ function newBoid(posX, posY, velX, velY) {
 }
 
 describe("Boid", function() {
-  describe("Separation", function () {
+  describe("Separation", function() {
     it("should slow down for a boid in front", function() {
       const boids = new Boids(makeOptions([1, 0, 0]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(10, 10, 0, 0)];
@@ -47,7 +47,7 @@ describe("Boid", function() {
     });
   });
 
-  describe("Cohesion", function () {
+  describe("Cohesion", function() {
     it("should move towards the nearby boids", function() {
       const boids = new Boids(makeOptions([0, 1, 0]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(10, 10, 0, 0)];
@@ -71,7 +71,7 @@ describe("Boid", function() {
     });
   });
 
-  describe("Alignment", function () {
+  describe("Alignment", function() {
     it("should align towards nearby boid", function() {
       const boids = new Boids(makeOptions([0, 0, 1]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(10, 10, 0.5, 0)];
@@ -98,9 +98,9 @@ describe("Boid", function() {
   it("should tick", function() {
     const boids = new Boids(makeOptions());
     const boid1 = newBoid(0, 0, 0.5, 0.5),
-        boid2 = newBoid(10, 10, 0, 0),
-        boid3 = newBoid(60, 60, 0, 0),
-        boid4 = newBoid(-10, -10, 0, 0);
+      boid2 = newBoid(10, 10, 0, 0),
+      boid3 = newBoid(60, 60, 0, 0),
+      boid4 = newBoid(-10, -10, 0, 0);
     boids.boids = [boid1, boid2, boid3, boid4];
 
     boids.tick();
