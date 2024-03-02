@@ -31,8 +31,8 @@ describe("Boid", function() {
       const boids = new Boids(makeOptions([1, 0, 0]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(10, 10, 0, 0)];
       boids.tick();
-      assertApprox(boids.boids[0].position.x, 0.4788, 4);
-      assertApprox(boids.boids[0].position.y, 0.4788, 4);
+      assertApprox(boids.boids[0].position.x, 0.4788);
+      assertApprox(boids.boids[0].position.y, 0.4788);
     });
 
     it("should ignore far away boids", function() {
@@ -47,8 +47,8 @@ describe("Boid", function() {
       const boids = new Boids(makeOptions([1, 0, 0]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(-10, -10, 0, 0)];
       boids.tick();
-      assertApprox(boids.boids[0].position.x, 0.5212, 4);
-      assertApprox(boids.boids[0].position.y, 0.5212, 4);
+      assertApprox(boids.boids[0].position.x, 0.5212);
+      assertApprox(boids.boids[0].position.y, 0.5212);
     });
   });
 
@@ -57,22 +57,22 @@ describe("Boid", function() {
       const boids = new Boids(makeOptions([0, 1, 0]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(10, 10, 0, 0)];
       boids.tick();
-      assertApprox(boids.boids[0].position.x, 0.5212, 4);
-      assertApprox(boids.boids[0].position.y, 0.5212, 4);
+      assertApprox(boids.boids[0].position.x, 0.5212);
+      assertApprox(boids.boids[0].position.y, 0.5212);
     });
     it("should ignore far away boids", function() {
       const boids = new Boids(makeOptions([0, 1, 0]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(60, 60, 1, 0)];
       boids.tick();
-      assertApprox(boids.boids[0].position.x, 0.5, 4);
-      assertApprox(boids.boids[0].position.y, 0.5, 4);
+      assertApprox(boids.boids[0].position.x, 0.5);
+      assertApprox(boids.boids[0].position.y, 0.5);
     });
     it("should ignore boids behind", function() {
       const boids = new Boids(makeOptions([0, 1, 0]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(-10, -10, 1, 1)];
       boids.tick();
-      assertApprox(boids.boids[0].position.x, 0.5, 4);
-      assertApprox(boids.boids[0].position.y, 0.5, 4);
+      assertApprox(boids.boids[0].position.x, 0.5);
+      assertApprox(boids.boids[0].position.y, 0.5);
     });
   });
 
@@ -81,22 +81,22 @@ describe("Boid", function() {
       const boids = new Boids(makeOptions([0, 0, 1]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(10, 10, 0.5, 0)];
       boids.tick();
-      assertApprox(boids.boids[0].speed.x, 0.5212, 4);
-      assertApprox(boids.boids[0].speed.y, 0.4788, 4);
+      assertApprox(boids.boids[0].speed.x, 0.5212);
+      assertApprox(boids.boids[0].speed.y, 0.4788);
     });
     it("should avoid far away boids", function() {
       const boids = new Boids(makeOptions([0, 0, 1]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(60, 60, 0, 0)];
       boids.tick();
-      assertApprox(boids.boids[0].speed.x, 0.5, 4);
-      assertApprox(boids.boids[0].speed.y, 0.5, 4);
+      assertApprox(boids.boids[0].speed.x, 0.5);
+      assertApprox(boids.boids[0].speed.y, 0.5);
     });
     it("should avoid boids behind", function() {
       const boids = new Boids(makeOptions([0, 0, 1]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(-10, -10, 0.5, 0)];
       boids.tick();
-      assertApprox(boids.boids[0].speed.x, 0.5, 4);
-      assertApprox(boids.boids[0].speed.y, 0.5, 4);
+      assertApprox(boids.boids[0].speed.x, 0.5);
+      assertApprox(boids.boids[0].speed.y, 0.5);
     });
   });
 
@@ -130,14 +130,14 @@ describe("Boid", function() {
   });
 
   function assertBoid(boid, val) {
-    assertApprox(boid.position.x, val[0], 4);
-    assertApprox(boid.position.y, val[1], 4);
+    assertApprox(boid.position.x, val[0]);
+    assertApprox(boid.position.y, val[1]);
 
-    assertApprox(boid.speed.x, val[2], 4);
-    assertApprox(boid.speed.y, val[3], 4);
+    assertApprox(boid.speed.x, val[2]);
+    assertApprox(boid.speed.y, val[3]);
   }
 
-  function assertApprox(val, val2, d) {
-    assert.equal(val.toFixed(d), val2.toFixed(d));
+  function assertApprox(val, val2) {
+    assert.equal(val.toFixed(4), val2.toFixed(4));
   }
 });
