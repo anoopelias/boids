@@ -1,12 +1,5 @@
-import { Boids as WasmBoids } from '../wasm/pkg/wasm.js';
-import { memory } from '../wasm/pkg/wasm_bg.wasm';
 import Vector from "./vector.js";
 import Boid from "./boid.js";
-
-let wasmBoids = WasmBoids.new();
-let boidsPtr = wasmBoids.get_boids();
-const boids = new Float64Array(memory.buffer, boidsPtr, 4);
-console.log(boids);
 
 export default function Boids(opts) {
   if (!(this instanceof Boids)) return new Boids(opts);
