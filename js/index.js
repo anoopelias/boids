@@ -49,7 +49,7 @@ Boids.prototype.findNeighbors = function(point) {
       continue;
     }
 
-    const distSq = boid.position.distSquared(point);
+    const distSq = distSquared(boid.position.arr(), point.arr());
     if (distSq < this.maxDistSq) {
       neighbors.push({
         neighbor: this.boids[i],
@@ -62,7 +62,7 @@ Boids.prototype.findNeighbors = function(point) {
 };
 
 Boids.prototype.calcCohesion = function(boid, neighbors) {
-  let total = new Vector(0, 0),
+  let total = [0, 0],
     count = 0;
 
   for (let i = 0; i < neighbors.length; i++) {
@@ -72,25 +72,26 @@ Boids.prototype.calcCohesion = function(boid, neighbors) {
     const distSq = neighbors[i].distSq;
     if (
       distSq < this.cohesionDistanceSq &&
-      isInFrontOf(boid, target.position)
+      isInFrontOf(boid, target.position.arr())
     ) {
-      total = total.add(target.position);
+      add(total, target.position.arr());
       count++;
     }
   }
 
-  if (count === 0) return new Vector(0, 0);
+  if (count === 0) return [0, 0];
 
-  return total
-    .divideBy(count)
-    .subtract(boid.position)
-    .normalize()
-    .subtract(boid.speed)
-    .limit(this.accelerationLimit);
+  divideBy(total, count);
+  subtract(total, boid.position.arr());
+  normalize(total);
+  subtract(total, boid.speed.arr());
+  limit(total, this.accelerationLimit);
+
+  return total;
 };
 
 Boids.prototype.calcSeparation = function(boid, neighbors) {
-  let total = new Vector(0, 0),
+  let total = [0, 0],
     count = 0;
 
   for (let i = 0; i < neighbors.length; i++) {
@@ -99,27 +100,29 @@ Boids.prototype.calcSeparation = function(boid, neighbors) {
 
     const distSq = neighbors[i].distSq;
     if (distSq < this.separationDistanceSq) {
-      total = total.add(
-        target.position
-          .subtract(boid.position)
-          .normalize()
-          .divideBy(target.position.distance(boid.position))
-      );
+      const position = target.position.arr();
+      const boidPosition = boid.position.arr();
+      const dist = distance(position, boidPosition);
+      subtract(position, boidPosition);
+      normalize(position);
+      divideBy(position, dist);
+      add(total, position);
       count++;
     }
   }
 
-  if (count === 0) return new Vector(0, 0);
+  if (count === 0) return [0, 0];
 
-  return total
-    .divideBy(count)
-    .normalize()
-    .add(boid.speed) // Adding speed instead of subtracting because separation is repulsive
-    .limit(this.accelerationLimit);
+  divideBy(total, count);
+  normalize(total);
+  add(total, boid.speed.arr());
+  limit(total, this.accelerationLimit);
+
+  return total;
 };
 
 Boids.prototype.calcAlignment = function(boid, neighbors) {
-  let total = new Vector(0, 0),
+  let total = [0, 0],
     count = 0;
 
   for (let i = 0; i < neighbors.length; i++) {
@@ -129,20 +132,21 @@ Boids.prototype.calcAlignment = function(boid, neighbors) {
     const distSq = neighbors[i].distSq;
     if (
       distSq < this.alignmentDistanceSq &&
-      isInFrontOf(boid, target.position)
+      isInFrontOf(boid, target.position.arr())
     ) {
-      total = total.add(target.speed);
+      add(total, target.speed.arr());
       count++;
     }
   }
 
-  if (count === 0) return new Vector(0, 0);
+  if (count === 0) return total;
 
-  return total
-    .divideBy(count)
-    .normalize()
-    .subtract(boid.speed)
-    .limit(this.accelerationLimit);
+  divideBy(total, count);
+  normalize(total);
+  subtract(total, boid.speed.arr());
+  limit(total, this.accelerationLimit);
+
+  return total;
 };
 
 Boids.prototype.tick = function() {
@@ -150,24 +154,92 @@ Boids.prototype.tick = function() {
   for (let i = 0; i < this.boids.length; i++) {
     let boid = this.boids[i];
     let neighbors = this.findNeighbors(boid.position);
+    const acceleration = this.calcCohesion(boid, neighbors);
+    multiplyBy(acceleration, this.cohesionForce);
 
-    const acceleration = this.calcCohesion(boid, neighbors)
-      .multiplyBy(this.cohesionForce)
-      .add(this.calcAlignment(boid, neighbors).multiplyBy(this.alignmentForce))
-      .subtract(this.calcSeparation(boid, neighbors).multiplyBy(this.separationForce));
+    const alignmentArr = this.calcAlignment(boid, neighbors);
+    multiplyBy(alignmentArr, this.alignmentForce);
+    add(acceleration, alignmentArr);
+
+    const separationArr = this.calcSeparation(boid, neighbors);
+    multiplyBy(separationArr, this.separationForce);
+    subtract(acceleration, separationArr);
 
     accelerations.push(acceleration);
   }
 
   for (let j = 0; j < this.boids.length; j++) {
     const boid = this.boids[j];
-    boid.speed = boid.speed.add(accelerations[j]).limit(this.speedLimit);
+    boid.speed = boid.speed.add(new Vector(accelerations[j][0], accelerations[j][1])).limit(this.speedLimit);
     boid.position = boid.position.add(boid.speed);
   }
 };
 
-function isInFrontOf(boid, point) {
-  return (
-    boid.position.angle(boid.position.add(boid.speed), point) <= Math.PI / 3
-  );
+function multiplyBy(vec, scalar) {
+  vec[0] *= scalar;
+  vec[1] *= scalar;
+}
+
+function add(vec1, vec2) {
+  vec1[0] += vec2[0];
+  vec1[1] += vec2[1];
+}
+
+function subtract(vec1, vec2) {
+  vec1[0] -= vec2[0];
+  vec1[1] -= vec2[1];
+}
+
+function distSquared(vec1, vec2) {
+  return Math.pow(vec1[0] - vec2[0], 2) + Math.pow(vec1[1] - vec2[1], 2);
+}
+
+function distance(vec1, vec2) {
+  return Math.sqrt(distSquared(vec1, vec2));
+}
+
+function magnitude(vec) {
+  return distance(vec, [0, 0]);
+}
+
+function normalize(vec) {
+  divideBy(vec, magnitude(vec));
+}
+
+function divideBy(vec, scalar) {
+  if (scalar !== 0) {
+    vec[0] /= scalar;
+    vec[1] /= scalar;
+  }
+}
+
+function limit(vec, scalar) {
+  const vecMagnitude = magnitude(vec);
+  if (vecMagnitude > scalar) {
+    normalize(vec);
+    multiplyBy(vec, scalar);
+  }
+}
+
+function angle(pivot, p1, p2) {
+  const vec1 = pivot.slice();
+  subtract(vec1, p1);
+  normalize(vec1);
+
+  const vec2 = pivot.slice();
+  subtract(vec2, p2);
+  normalize(vec2);
+
+  // Rounding is because sometimes the value goes beyond 1.0
+  // due to floating point precision errors
+  const cos = Math.round((vec1[0] * vec2[0] + vec1[1] * vec2[1]) * 10000) / 10000;
+
+  return Math.acos(cos);
+}
+
+function isInFrontOf(boid, p2) {
+  const p1 = boid.position.arr().slice();
+  add(p1, boid.speed.arr());
+
+  return angle(boid.position.arr(), p1, p2) <= Math.PI / 3;
 }

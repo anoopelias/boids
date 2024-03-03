@@ -71,4 +71,8 @@ Vector.prototype.toString = function() {
   return "{x:" + this.x + ", y:" + this.y + "}";
 };
 
+Vector.prototype.arr = function () {
+  return [this.x, this.y];
+};
+
 export default Vector;
