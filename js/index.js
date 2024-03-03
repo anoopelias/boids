@@ -43,13 +43,13 @@ export default function Boids(opts) {
 Boids.prototype.findNeighbors = function(point) {
   const neighbors = [];
   for (let i = 0; i < this.boids.length; i++) {
-    let boid = this.boids[i];
+    const boid = this.boids[i];
 
     if (point === boid.position) {
       continue;
     }
 
-    let distSq = boid.position.distSquared(point);
+    const distSq = boid.position.distSquared(point);
     if (distSq < this.maxDistSq) {
       neighbors.push({
         neighbor: this.boids[i],
@@ -63,15 +63,13 @@ Boids.prototype.findNeighbors = function(point) {
 
 Boids.prototype.calcCohesion = function(boid, neighbors) {
   let total = new Vector(0, 0),
-    distSq,
-    target,
     count = 0;
 
   for (let i = 0; i < neighbors.length; i++) {
-    target = neighbors[i].neighbor;
+    const target = neighbors[i].neighbor;
     if (boid === target) continue;
 
-    distSq = neighbors[i].distSq;
+    const distSq = neighbors[i].distSq;
     if (
       distSq < this.cohesionDistanceSq &&
       isInFrontOf(boid, target.position)
@@ -93,15 +91,13 @@ Boids.prototype.calcCohesion = function(boid, neighbors) {
 
 Boids.prototype.calcSeparation = function(boid, neighbors) {
   let total = new Vector(0, 0),
-    target,
-    distSq,
     count = 0;
 
   for (let i = 0; i < neighbors.length; i++) {
-    target = neighbors[i].neighbor;
+    const target = neighbors[i].neighbor;
     if (boid === target) continue;
 
-    distSq = neighbors[i].distSq;
+    const distSq = neighbors[i].distSq;
     if (distSq < this.separationDistanceSq) {
       total = total.add(
         target.position
@@ -124,15 +120,13 @@ Boids.prototype.calcSeparation = function(boid, neighbors) {
 
 Boids.prototype.calcAlignment = function(boid, neighbors) {
   let total = new Vector(0, 0),
-    target,
-    distSq,
     count = 0;
 
   for (let i = 0; i < neighbors.length; i++) {
-    target = neighbors[i].neighbor;
+    const target = neighbors[i].neighbor;
     if (boid === target) continue;
 
-    distSq = neighbors[i].distSq;
+    const distSq = neighbors[i].distSq;
     if (
       distSq < this.alignmentDistanceSq &&
       isInFrontOf(boid, target.position)
@@ -167,9 +161,7 @@ Boids.prototype.tick = function() {
 
   for (let j = 0; j < this.boids.length; j++) {
     const boid = this.boids[j];
-    const acceleration = accelerations[j];
-
-    boid.speed = boid.speed.add(acceleration).limit(this.speedLimit);
+    boid.speed = boid.speed.add(accelerations[j]).limit(this.speedLimit);
     boid.position = boid.position.add(boid.speed);
   }
 };
