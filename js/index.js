@@ -1,13 +1,10 @@
-const EventEmitter = require("events").EventEmitter,
-  inherits = require("inherits"),
-  Vector = require("./vector"),
+const Vector = require("./vector"),
   Boid = require("./boid");
 
 module.exports = Boids;
 
 function Boids(opts, callback) {
   if (!(this instanceof Boids)) return new Boids(opts, callback);
-  EventEmitter.call(this);
 
   opts = opts || {};
   callback = callback || function() {};
@@ -44,12 +41,7 @@ function Boids(opts, callback) {
       new Vector(0, 0)
     );
   }
-
-  this.on("tick", function() {
-    callback(boids);
-  });
 }
-inherits(Boids, EventEmitter);
 
 Boids.prototype.init = function() {
   this.tickData = {};
@@ -189,8 +181,6 @@ Boids.prototype.tick = function() {
     boid.position = boid.position.add(boid.speed);
     delete boid.acceleration;
   }
-
-  this.emit("tick", this.boids);
 };
 
 function isInFrontOf(boid, point) {
