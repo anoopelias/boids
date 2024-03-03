@@ -3,11 +3,10 @@ const Vector = require("./vector"),
 
 module.exports = Boids;
 
-function Boids(opts, callback) {
-  if (!(this instanceof Boids)) return new Boids(opts, callback);
+function Boids(opts) {
+  if (!(this instanceof Boids)) return new Boids(opts);
 
   opts = opts || {};
-  callback = callback || function() {};
 
   this.speedLimit = opts.speedLimit || 1;
   this.accelerationLimit = opts.accelerationLimit || 0.03;
