@@ -152,22 +152,25 @@ Boids.prototype.calcAlignment = function(boid, neighbors) {
 };
 
 Boids.prototype.tick = function() {
+  const accelerations = [];
   for (let i = 0; i < this.boids.length; i++) {
     let boid = this.boids[i];
     let neighbors = this.findNeighbors(boid.position);
 
-    boid.acceleration = this.calcCohesion(boid, neighbors)
+    const acceleration = this.calcCohesion(boid, neighbors)
       .multiplyBy(this.cohesionForce)
       .add(this.calcAlignment(boid, neighbors).multiplyBy(this.alignmentForce))
       .subtract(this.calcSeparation(boid, neighbors).multiplyBy(this.separationForce));
+
+    accelerations.push(acceleration);
   }
 
   for (let j = 0; j < this.boids.length; j++) {
-    let boid = this.boids[j];
-    boid.speed = boid.speed.add(boid.acceleration).limit(this.speedLimit);
+    const boid = this.boids[j];
+    const acceleration = accelerations[j];
 
+    boid.speed = boid.speed.add(acceleration).limit(this.speedLimit);
     boid.position = boid.position.add(boid.speed);
-    delete boid.acceleration;
   }
 };
 
