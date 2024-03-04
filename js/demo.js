@@ -2,7 +2,6 @@ import fps from "fps";
 import ticker from "ticker";
 import debounce from "debounce";
 import Boids from "./index.js";
-import Vector from "./vector.js";
 import Boid from "./boid.js";
 
 const anchor = document.createElement("a"),
@@ -20,8 +19,8 @@ canvas.addEventListener("click", function(e) {
   if (boids.boids.length < 500)
     boids.boids.push(
       new Boid(
-        new Vector(x, y),
-        new Vector(Math.random() * 6 - 3, Math.random() * 6 - 3)
+        [x, y],
+        [Math.random() * 6 - 3, Math.random() * 6 - 3]
       )
     );
 });
@@ -53,12 +52,12 @@ ticker(window, 60)
 
     ctx.fillStyle = "#543D5E";
     for (let i = 0, l = boidData.length, x, y; i < l; i += 1) {
-      x = boidData[i].position.x;
-      y = boidData[i].position.y;
+      x = boidData[i].position[0];
+      y = boidData[i].position[1];
       // wrap around the screen
-      boidData[i].position.x =
+      boidData[i].position[0] =
         x > halfWidth ? -halfWidth : -x > halfWidth ? halfWidth : x;
-      boidData[i].position.y =
+      boidData[i].position[1] =
         y > halfHeight ? -halfHeight : -y > halfHeight ? halfHeight : y;
       ctx.fillRect(x + halfWidth, y + halfHeight, 2, 2);
     }
@@ -72,8 +71,8 @@ const frames = fps({ every: 10, decay: 0.04 }).on("data", function(rate) {
     if (rate >= 60 && boids.boids.length < 300)
       boids.boids.push(
         new Boid(
-          new Vector(0, 0),
-          new Vector(Math.random() * 6 - 3, Math.random() * 6 - 3)
+          [0, 0],
+          [(Math.random() * 6) - 3, (Math.random() * 6) - 3]
         )
       );
   }

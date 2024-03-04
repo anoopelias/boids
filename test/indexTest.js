@@ -1,6 +1,5 @@
 import assert from 'assert';
 import Boids from '../js/index.js';
-import Vector from '../js/vector.js';
 import Boid from '../js/boid.js';
 
 function makeOptions(force) {
@@ -17,7 +16,7 @@ function makeOptions(force) {
 }
 
 function newBoid(posX, posY, velX, velY) {
-  return new Boid(new Vector(posX, posY), new Vector(velX, velY));
+  return new Boid([posX, posY], [velX, velY]);
 }
 
 describe("Boid", function() {
@@ -26,24 +25,24 @@ describe("Boid", function() {
       const boids = new Boids(makeOptions([1, 0, 0]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(10, 10, 0, 0)];
       boids.tick();
-      assertApprox(boids.boids[0].position.x, 0.4788);
-      assertApprox(boids.boids[0].position.y, 0.4788);
+      assertApprox(boids.boids[0].position[0], 0.4788);
+      assertApprox(boids.boids[0].position[1], 0.4788);
     });
 
     it("should ignore far away boids", function() {
       const boids = new Boids(makeOptions([1, 0, 0]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(60, 60, 0, 0)];
       boids.tick();
-      assert.equal(boids.boids[0].position.x, 0.5);
-      assert.equal(boids.boids[0].position.y, 0.5);
+      assert.equal(boids.boids[0].position[0], 0.5);
+      assert.equal(boids.boids[0].position[1], 0.5);
     });
 
     it("should speed up for boids behind", function() {
       const boids = new Boids(makeOptions([1, 0, 0]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(-10, -10, 0, 0)];
       boids.tick();
-      assertApprox(boids.boids[0].position.x, 0.5212);
-      assertApprox(boids.boids[0].position.y, 0.5212);
+      assertApprox(boids.boids[0].position[0], 0.5212);
+      assertApprox(boids.boids[0].position[1], 0.5212);
     });
   });
 
@@ -52,22 +51,22 @@ describe("Boid", function() {
       const boids = new Boids(makeOptions([0, 1, 0]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(10, 10, 0, 0)];
       boids.tick();
-      assertApprox(boids.boids[0].position.x, 0.5212);
-      assertApprox(boids.boids[0].position.y, 0.5212);
+      assertApprox(boids.boids[0].position[0], 0.5212);
+      assertApprox(boids.boids[0].position[1], 0.5212);
     });
     it("should ignore far away boids", function() {
       const boids = new Boids(makeOptions([0, 1, 0]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(60, 60, 1, 0)];
       boids.tick();
-      assertApprox(boids.boids[0].position.x, 0.5);
-      assertApprox(boids.boids[0].position.y, 0.5);
+      assertApprox(boids.boids[0].position[0], 0.5);
+      assertApprox(boids.boids[0].position[1], 0.5);
     });
     it("should ignore boids behind", function() {
       const boids = new Boids(makeOptions([0, 1, 0]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(-10, -10, 1, 1)];
       boids.tick();
-      assertApprox(boids.boids[0].position.x, 0.5);
-      assertApprox(boids.boids[0].position.y, 0.5);
+      assertApprox(boids.boids[0].position[0], 0.5);
+      assertApprox(boids.boids[0].position[1], 0.5);
     });
   });
 
@@ -76,23 +75,31 @@ describe("Boid", function() {
       const boids = new Boids(makeOptions([0, 0, 1]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(10, 10, 0.5, 0)];
       boids.tick();
-      assertApprox(boids.boids[0].speed.x, 0.5212);
-      assertApprox(boids.boids[0].speed.y, 0.4788);
+      assertApprox(boids.boids[0].speed[0], 0.5212);
+      assertApprox(boids.boids[0].speed[1], 0.4788);
     });
     it("should avoid far away boids", function() {
       const boids = new Boids(makeOptions([0, 0, 1]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(60, 60, 0, 0)];
       boids.tick();
-      assertApprox(boids.boids[0].speed.x, 0.5);
-      assertApprox(boids.boids[0].speed.y, 0.5);
+      assertApprox(boids.boids[0].speed[0], 0.5);
+      assertApprox(boids.boids[0].speed[1], 0.5);
     });
     it("should avoid boids behind", function() {
       const boids = new Boids(makeOptions([0, 0, 1]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(-10, -10, 0.5, 0)];
       boids.tick();
-      assertApprox(boids.boids[0].speed.x, 0.5);
-      assertApprox(boids.boids[0].speed.y, 0.5);
+      assertApprox(boids.boids[0].speed[0], 0.5);
+      assertApprox(boids.boids[0].speed[1], 0.5);
     });
+  });
+
+  it("should limit the speed", function() {
+    const boids = new Boids(makeOptions());
+    const boid = newBoid(73, 73, -2.5, 1.5);
+    boids.boids = [boid];
+    boids.tick();
+    assertBoid(boid, [72.1425, 73.5145, -0.8575, 0.5145]);
   });
 
   it("should tick", function() {
@@ -129,11 +136,11 @@ describe("Boid", function() {
   });
 
   function assertBoid(boid, val) {
-    assertApprox(boid.position.x, val[0]);
-    assertApprox(boid.position.y, val[1]);
+    assertApprox(boid.position[0], val[0]);
+    assertApprox(boid.position[1], val[1]);
 
-    assertApprox(boid.speed.x, val[2]);
-    assertApprox(boid.speed.y, val[3]);
+    assertApprox(boid.speed[0], val[2]);
+    assertApprox(boid.speed[1], val[3]);
   }
 
   function assertApprox(val, val2) {
