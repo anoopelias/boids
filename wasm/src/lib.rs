@@ -2,6 +2,7 @@ extern crate wasm_bindgen;
 extern crate web_sys;
 
 mod utils;
+mod vec2d;
 
 use wasm_bindgen::prelude::*;
 
