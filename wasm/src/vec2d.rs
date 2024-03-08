@@ -1,6 +1,6 @@
 #![allow(unused)]
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct Vec2d {
     x: f64,
     y: f64,
@@ -49,6 +49,15 @@ impl Vec2d {
 
     fn subtract(&self, other: &Vec2d) -> Vec2d {
         self.add(&other.neg())
+    }
+
+    fn limit(&self, scalar: f64) -> Vec2d {
+        if self.magnitude() > scalar {
+            self.normalize().multiply_by(scalar)
+        } else {
+            self.clone()
+        }
+
     }
 }
 
@@ -117,6 +126,18 @@ mod tests {
         let v1 = Vec2d::new(30.0, 40.0);
         let v2 = Vec2d::new(10.0, 15.0);
         assert_eq!(v1.subtract(&v2), Vec2d::new(20.0, 25.0));
+    }
+
+    #[test]
+    fn limit() {
+        let v1 = Vec2d::new(30.0, 40.0);
+        assert_eq!(v1.limit(10.0), Vec2d::new(6.0, 8.0));
+    }
+
+    #[test]
+    fn under_limit() {
+        let v1 = Vec2d::new(30.0, 40.0);
+        assert_eq!(v1.limit(60.0), Vec2d::new(30.0, 40.0));
     }
 
 }
