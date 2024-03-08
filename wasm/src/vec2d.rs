@@ -22,6 +22,10 @@ impl Vec2d {
     fn dist(&self, other: &Vec2d) -> f64 {
         self.dist_squared(other).sqrt()
     }
+
+    fn multiply_by(&self, scalar: f64) -> Vec2d {
+        Vec2d::new(self.x * scalar, self.y * scalar)
+    }
 }
 
 #[cfg(test)]
@@ -47,5 +51,10 @@ mod tests {
         let v1 = Vec2d::new(10.0, 20.0);
         let v2 = Vec2d::new(30.0, 40.0);
         assert_eq!(v1.dist(&v2), 28.284271247461902);
+    }
+    #[test]
+    fn multiply_by() {
+        let v1 = Vec2d::new(10.0, 20.0);
+        assert_eq!(v1.multiply_by(3.0), Vec2d::new(30.0, 60.0));
     }
 }
