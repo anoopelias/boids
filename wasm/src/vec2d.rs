@@ -26,6 +26,10 @@ impl Vec2d {
     fn multiply_by(&self, scalar: f64) -> Vec2d {
         Vec2d::new(self.x * scalar, self.y * scalar)
     }
+
+    fn neg(&self) -> Vec2d {
+        Vec2d::new(-self.x, -self.y)
+    }
 }
 
 #[cfg(test)]
@@ -57,4 +61,11 @@ mod tests {
         let v1 = Vec2d::new(10.0, 20.0);
         assert_eq!(v1.multiply_by(3.0), Vec2d::new(30.0, 60.0));
     }
+
+    #[test]
+    fn neg() {
+        let v1 = Vec2d::new(10.0, 20.0);
+        assert_eq!(v1.neg(), Vec2d::new(-10.0, -20.0));
+    }
+
 }
