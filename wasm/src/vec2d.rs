@@ -46,6 +46,10 @@ impl Vec2d {
     fn normalize(&self) -> Vec2d {
         self.divide_by(self.magnitude())
     }
+
+    fn subtract(&self, other: &Vec2d) -> Vec2d {
+        self.add(&other.neg())
+    }
 }
 
 #[cfg(test)]
@@ -107,5 +111,12 @@ mod tests {
         let v1 = Vec2d::new(30.0, 40.0);
         assert_eq!(v1.normalize(), Vec2d::new(0.6, 0.8));
     }
-    
+
+    #[test]
+    fn subtract() {
+        let v1 = Vec2d::new(30.0, 40.0);
+        let v2 = Vec2d::new(10.0, 15.0);
+        assert_eq!(v1.subtract(&v2), Vec2d::new(20.0, 25.0));
+    }
+
 }
