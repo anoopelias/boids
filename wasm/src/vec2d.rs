@@ -19,7 +19,7 @@ impl Vec2d {
         (self.x - other.x).powf(2.0) + (self.y - other.y).powf(2.0)
     }
 
-    fn dist(&self, other: &Vec2d) -> f64 {
+    fn distance(&self, other: &Vec2d) -> f64 {
         self.dist_squared(other).sqrt()
     }
 
@@ -29,6 +29,10 @@ impl Vec2d {
 
     fn neg(&self) -> Vec2d {
         Vec2d::new(-self.x, -self.y)
+    }
+
+    fn magnitude(&self) -> f64 {
+        self.distance(&Vec2d::new(0.0, 0.0))
     }
 }
 
@@ -54,7 +58,7 @@ mod tests {
     fn distance() {
         let v1 = Vec2d::new(10.0, 20.0);
         let v2 = Vec2d::new(30.0, 40.0);
-        assert_eq!(v1.dist(&v2), 28.284271247461902);
+        assert_eq!(v1.distance(&v2), 28.284271247461902);
     }
     #[test]
     fn multiply_by() {
@@ -66,6 +70,12 @@ mod tests {
     fn neg() {
         let v1 = Vec2d::new(10.0, 20.0);
         assert_eq!(v1.neg(), Vec2d::new(-10.0, -20.0));
+    }
+
+    #[test]
+    fn magnitude() {
+        let v1 = Vec2d::new(30.0, 40.0);
+        assert_eq!(v1.magnitude(), 50.0);
     }
 
 }
