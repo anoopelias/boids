@@ -34,6 +34,14 @@ impl Vec2d {
     fn magnitude(&self) -> f64 {
         self.distance(&Vec2d::new(0.0, 0.0))
     }
+
+    fn divide_by(&self, scalar: f64) -> Vec2d {
+        if scalar == 0.0 {
+            Vec2d::new(0.0, 0.0)
+        } else {
+            self.multiply_by(1.0 / scalar)
+        }
+    }
 }
 
 #[cfg(test)]
@@ -77,5 +85,18 @@ mod tests {
         let v1 = Vec2d::new(30.0, 40.0);
         assert_eq!(v1.magnitude(), 50.0);
     }
+
+    #[test]
+    fn divide_by() {
+        let v1 = Vec2d::new(15.0, 20.0);
+        assert_eq!(v1.divide_by(2.0), Vec2d::new(7.5, 10.0));
+    }
+
+    #[test]
+    fn divide_by_zero() {
+        let v1 = Vec2d::new(15.0, 20.0);
+        assert_eq!(v1.divide_by(0.0), Vec2d::new(0.0, 0.0));
+    }
+
 
 }
