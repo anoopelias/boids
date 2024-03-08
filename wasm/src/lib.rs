@@ -13,6 +13,7 @@ extern "C" {
     fn log(s: &str);
 }
 
+#[allow(unused)]
 pub struct Boid {
     pos_x: f64,
     pos_y: f64,
