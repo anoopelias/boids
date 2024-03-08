@@ -42,6 +42,10 @@ impl Vec2d {
             self.multiply_by(1.0 / scalar)
         }
     }
+
+    fn normalize(&self) -> Vec2d {
+        self.divide_by(self.magnitude())
+    }
 }
 
 #[cfg(test)]
@@ -98,5 +102,10 @@ mod tests {
         assert_eq!(v1.divide_by(0.0), Vec2d::new(0.0, 0.0));
     }
 
-
+    #[test]
+    fn normalize() {
+        let v1 = Vec2d::new(30.0, 40.0);
+        assert_eq!(v1.normalize(), Vec2d::new(0.6, 0.8));
+    }
+    
 }
