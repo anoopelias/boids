@@ -5,6 +5,7 @@ mod utils;
 mod vec2d;
 
 use wasm_bindgen::prelude::*;
+use crate::utils::set_panic_hook;
 
 #[wasm_bindgen]
 extern "C" {
@@ -26,6 +27,7 @@ pub struct Boids {
 
 impl Boid {
     fn new() -> Boid {
+        set_panic_hook();
         Boid {
             pos_x: 20.5,
             pos_y: 40.2,
