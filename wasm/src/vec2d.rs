@@ -59,10 +59,17 @@ impl Vec2d {
         }
 
     }
+
+    fn angle(&self, p1: &Vec2d, p2: &Vec2d) -> f64 {
+        let v1 = self.subtract(p1).normalize();
+        let v2 = self.subtract(p2).normalize();
+        ((v1.x * v2.x) + (v1.y * v2.y)).acos()
+    }
 }
 
 #[cfg(test)]
 mod tests {
+    use std::f32::consts;
     use crate::vec2d::Vec2d;
 
     #[test]
@@ -138,6 +145,16 @@ mod tests {
     fn under_limit() {
         let v1 = Vec2d::new(30.0, 40.0);
         assert_eq!(v1.limit(60.0), Vec2d::new(30.0, 40.0));
+    }
+
+    #[test]
+    fn angle() {
+        let v1 = Vec2d::new(1.0, 1.0);
+        let v2 = Vec2d::new(2.0, 2.0);
+        let v3 = Vec2d::new(2.0, 1.0);
+
+        // ~(PI / 4.0)
+        assert_eq!(v1.angle(&v2, &v3), 0.7853981633974484);
     }
 
 }
