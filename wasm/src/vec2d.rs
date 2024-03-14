@@ -2,12 +2,12 @@
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Vec2d {
-    x: f64,
-    y: f64,
+    pub x: f64,
+    pub y: f64,
 }
 
 impl Vec2d {
-    fn new(x: f64, y: f64) -> Vec2d {
+    pub fn new(x: f64, y: f64) -> Vec2d {
         Vec2d { x, y }
     }
 
@@ -57,7 +57,6 @@ impl Vec2d {
         } else {
             self.clone()
         }
-
     }
 
     fn angle(&self, p1: &Vec2d, p2: &Vec2d) -> f64 {
@@ -69,8 +68,8 @@ impl Vec2d {
 
 #[cfg(test)]
 mod tests {
-    use std::f32::consts;
     use crate::vec2d::Vec2d;
+    use std::f32::consts;
 
     #[test]
     fn add() {
@@ -156,5 +155,4 @@ mod tests {
         // ~(PI / 4.0)
         assert_eq!(v1.angle(&v2, &v3), 0.7853981633974484);
     }
-
 }
