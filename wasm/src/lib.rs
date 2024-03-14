@@ -27,7 +27,6 @@ pub struct Boids {
 
 impl Boid {
     fn new(pos_x: f64, pos_y: f64, speed_x: f64, speed_y: f64) -> Boid {
-        set_panic_hook();
         Boid {
             pos: Vec2d::new(pos_x, pos_y),
             speed: Vec2d::new(speed_x, speed_y),
@@ -38,6 +37,7 @@ impl Boid {
 #[wasm_bindgen]
 impl Boids {
     pub fn new() -> Boids {
+        set_panic_hook();
         let boids = vec![];
         Boids { boids }
     }
@@ -52,6 +52,12 @@ impl Boids {
 
     pub fn add_boid(&mut self, pos_x: f64, pos_y: f64, vel_x: f64, vel_y: f64) {
         self.boids.push(Boid::new(pos_x, pos_y, vel_x, vel_y))
+    }
+
+    pub fn tick(&mut self) {
+        for boid in self.boids.iter_mut() {
+            boid.pos = boid.pos.add(&boid.speed);
+        }
     }
 }
 
@@ -84,5 +90,15 @@ mod tests {
         assert_eq!(second_boid.pos.y, 3.5);
         assert_eq!(second_boid.speed.x, 1.5);
         assert_eq!(second_boid.speed.y, 1.25);
+    }
+    #[test]
+    fn tick_should_move() {
+        let mut boids = Boids::new();
+        boids.add_boid(1.5, 2.5, 0.5, 0.25);
+        boids.tick();
+
+        let boid = nth_boid(boids.get_boids_ptr(), 0);
+        assert_eq!(boid.pos.x, 2.0);
+        assert_eq!(boid.pos.y, 2.75);
     }
 }

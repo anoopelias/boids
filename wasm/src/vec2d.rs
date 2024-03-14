@@ -11,7 +11,7 @@ impl Vec2d {
         Vec2d { x, y }
     }
 
-    fn add(&self, other: &Vec2d) -> Vec2d {
+    pub fn add(&self, other: &Vec2d) -> Vec2d {
         Vec2d::new(self.x + other.x, self.y + other.y)
     }
 
