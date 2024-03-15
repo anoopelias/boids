@@ -19,11 +19,11 @@ impl Vec2d {
         (self.x - other.x).powf(2.0) + (self.y - other.y).powf(2.0)
     }
 
-    fn distance(&self, other: &Vec2d) -> f64 {
+    pub fn distance(&self, other: &Vec2d) -> f64 {
         self.dist_squared(other).sqrt()
     }
 
-    fn multiply_by(&self, scalar: f64) -> Vec2d {
+    pub fn multiply_by(&self, scalar: f64) -> Vec2d {
         Vec2d::new(self.x * scalar, self.y * scalar)
     }
 
@@ -35,7 +35,7 @@ impl Vec2d {
         self.distance(&Vec2d::new(0.0, 0.0))
     }
 
-    fn divide_by(&self, scalar: f64) -> Vec2d {
+    pub fn divide_by(&self, scalar: f64) -> Vec2d {
         if scalar == 0.0 {
             Vec2d::new(0.0, 0.0)
         } else {
@@ -43,15 +43,15 @@ impl Vec2d {
         }
     }
 
-    fn normalize(&self) -> Vec2d {
+    pub fn normalize(&self) -> Vec2d {
         self.divide_by(self.magnitude())
     }
 
-    fn subtract(&self, other: &Vec2d) -> Vec2d {
+    pub fn subtract(&self, other: &Vec2d) -> Vec2d {
         self.add(&other.neg())
     }
 
-    fn limit(&self, scalar: f64) -> Vec2d {
+    pub fn limit(&self, scalar: f64) -> Vec2d {
         if self.magnitude() > scalar {
             self.normalize().multiply_by(scalar)
         } else {
