@@ -4,6 +4,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 export default {
   entry: {
     bundle: './js/bootstrap.js',
+    wasmBundle: './js/wasm-bootstrap.js',
     browserBenchmark: './js/browser-benchmark.js',
   },
   experiments: {
@@ -39,6 +40,11 @@ export default {
         filename: 'benchmark.html',
         template: 'benchmark.html',
         chunks: ['browserBenchmark'],
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'wasm-test.html',
+      template: 'benchmark.html',
+      chunks: ['wasmBundle'],
     }),
   ]
 };
