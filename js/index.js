@@ -85,6 +85,7 @@ Boids.prototype.calcCohesion = function(boid, neighbors) {
     .divideBy(count)
     .subtract(boid.position)
     .normalize()
+    .subtract(boid.speed)
     .limit(this.accelerationLimit);
 };
 
@@ -102,6 +103,7 @@ Boids.prototype.calcSeparation = function(boid, neighbors) {
         target.position
           .subtract(boid.position)
           .normalize()
+          .divideBy(target.position.distance(boid.position))
       );
       count++;
     }
@@ -112,6 +114,7 @@ Boids.prototype.calcSeparation = function(boid, neighbors) {
   return total
     .divideBy(count)
     .normalize()
+    .add(boid.speed) // Adding speed instead of subtracting because separation is repulsive
     .limit(this.accelerationLimit);
 };
 
@@ -138,6 +141,7 @@ Boids.prototype.calcAlignment = function(boid, neighbors) {
   return total
     .divideBy(count)
     .normalize()
+    .subtract(boid.speed)
     .limit(this.accelerationLimit);
 };
 

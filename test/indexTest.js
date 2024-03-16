@@ -76,8 +76,8 @@ describe("Boid", function() {
       const boids = new Boids(makeOptions([0, 0, 1]));
       boids.boids = [newBoid(0, 0, 0.5, 0.5), newBoid(10, 10, 0.5, 0)];
       boids.tick();
-      assertApprox(boids.boids[0].speed.x, 0.5300);
-      assertApprox(boids.boids[0].speed.y, 0.5000);
+      assertApprox(boids.boids[0].speed.x, 0.5212);
+      assertApprox(boids.boids[0].speed.y, 0.4788);
     });
     it("should avoid far away boids", function() {
       const boids = new Boids(makeOptions([0, 0, 1]));
@@ -104,24 +104,25 @@ describe("Boid", function() {
     boids.boids = [boid1, boid2, boid3, boid4];
 
     boids.tick();
-    assertBoid(boid1, [0.5212, 0.5212, 0.5212, 0.5212]);
+    assertBoid(boid1, [0.4364, 0.4364, 0.4364, 0.4364]);
     assertBoid(boid2, [10.0424, 10.0424, 0.0424, 0.0424]);
     assertBoid(boid3, [60, 60, 0, 0]);
     assertBoid(boid4, [-10.0424, -10.0424, -0.0424, -0.0424]);
 
     boids.tick();
+    assertBoid(boid1, [0.8939, 0.8939, 0.4576, 0.4576]);
     assertBoid(boid2, [10.1273, 10.1273, 0.0849, 0.0849]);
     assertBoid(boid3, [60, 60, 0, 0]);
     assertBoid(boid4, [-10.1273, -10.1273, -0.0849, -0.0849]);
 
     boids.tick();
-    assertBoid(boid1, [1.8394, 1.8394, 0.6909, 0.6909]);
+    assertBoid(boid1, [1.3727, 1.3727, 0.4788, 0.4788]);
     assertBoid(boid2, [10.2546, 10.2546, 0.1273, 0.1273]);
     assertBoid(boid3, [60, 60, 0, 0]);
     assertBoid(boid4, [-10.2546, -10.2546, -0.1273, -0.1273]);
 
     boids.tick();
-    assertBoid(boid1, [2.5465, 2.5465, 0.7071, 0.7071]);
+    assertBoid(boid1, [1.8727, 1.8727, 0.5, 0.5]);
     assertBoid(boid2, [10.4243, 10.4243, 0.1697, 0.1697]);
     assertBoid(boid3, [60, 60, 0, 0]);
     assertBoid(boid4, [-10.4243, -10.4243, -0.1697, -0.1697]);
