@@ -6,7 +6,7 @@ function tickBenchmark() {
   let numReports = [];
   console.log("Running benchmark, please wait..");
   for (let n of boidNums) {
-    const boids = Boids({ boids: n });
+    const boids = new Boids({ boids: n });
 
     for (let i = 0; i < 1000; i++) {
       const startTime = performance.now();

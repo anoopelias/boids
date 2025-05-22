@@ -8,7 +8,7 @@ import Boid from "./boid.js";
 const anchor = document.createElement("a"),
   canvas = document.createElement("canvas"),
   ctx = canvas.getContext("2d"),
-  boids = Boids();
+  boids = new Boids();
 
 canvas.addEventListener("click", function(e) {
   let x = e.pageX,

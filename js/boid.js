@@ -1,12 +1,14 @@
-export default function Boid(position, speed) {
-  this.position = position;
-  this.speed = speed;
+export default class Boid {
+  constructor(position, speed) {
+    this.position = position;
+    this.speed = speed;
+  }
+
+  compare(that, isEven) {
+    return this.position.compare(that.position, isEven);
+  }
+
+  toString() {
+    return this.position.toString();
+  }
 }
-
-Boid.prototype.compare = function(that, isEven) {
-  return this.position.compare(that.position, isEven);
-};
-
-Boid.prototype.toString = function() {
-  return this.position.toString();
-};
