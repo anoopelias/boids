@@ -1,5 +1,10 @@
 import path from 'path';
+import { fileURLToPath } from 'url'; // Import fileURLToPath
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+
+// Derive __dirname using import.meta.url
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default {
   entry: {
@@ -14,7 +19,8 @@ export default {
     rules: [
       {
         test: /\.js$/,
-        include: path.resolve(import.meta.dirname, 'js'),
+        // Use the derived __dirname
+        include: path.resolve(__dirname, 'js'), 
         use: {
           loader: 'babel-loader',
           options: {
